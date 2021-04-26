@@ -1,0 +1,17 @@
+{
+  "name": "facebook-win",
+  "version": "1.0.0",
+  "description": "controlling stream using websocket",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "author": "mohamed khounti",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.1",
+    "nodemon": "^2.0.7",
+    "obs-websocket-js": "^4.0.2"
+  }
+}
