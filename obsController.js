@@ -1,6 +1,6 @@
 const OBSWebSocket = require("obs-websocket-js");
 const chalk = require("chalk");
-
+const axios = require("axios");
 class obsController {
   obs;
   constructor() {
@@ -34,14 +34,14 @@ class obsController {
     );
   }
   //start streaming
- async startStreaming() {
-    
-    // start streaming 
+ async startStreaming() { 
    this.obs.sendCallback("StartStreaming", (error) => {
         // if there is no errors
       if (error === null) {
         console.log(chalk.yellow("Stream Started "));
-        console.log(chalk.yellow("Collecting Comments..."));
+        console.log(chalk.yellow("listening to Comments..."));
+
+
       }
       
     });
