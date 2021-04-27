@@ -1,23 +1,27 @@
 const OBSWebSocket = require("obs-websocket-js");
 const chalk = require("chalk");
-const axios = require("axios");
+
 class obsController {
   obs;
+
   constructor() {
     this.obs = new OBSWebSocket();
   }
   // connect to obs
-  Connect() {
-    this.obs
+  async Connect() {
+    let result = false;
+    await this.obs
       .connect({
         address: "localhost:4444",
         password: "admin",
       })
       .then(() => {
         console.log(chalk.green(`Success! We're connected & authenticated.`));
-        this.startStreaming();
+
         // this.restartStream();
+        result = this.startStreaming();
       });
+    return result;
   }
   //restart the stream
   restartStream() {
@@ -28,24 +32,26 @@ class obsController {
       },
       (error) => {
         if (error !== null) {
-          console.log(error);
         }
       }
     );
   }
   //start streaming
- async startStreaming() { 
-   this.obs.sendCallback("StartStreaming", (error) => {
-        // if there is no errors
-      if (error === null) {
+  async startStreaming() {
+    let isStreamStarted = false;
+
+    await this.obs.send("StartStreaming").then((streaming) => {
+      // if there is no errors
+      if (streaming.status === "ok") {
         console.log(chalk.yellow("Stream Started "));
-        console.log(chalk.yellow("listening to Comments..."));
 
-
+        isStreamStarted = !isStreamStarted;
+      } else {
+        isStreamStarted;
       }
-      
     });
-  
+    return isStreamStarted;
   }
 }
+
 module.exports = obsController;

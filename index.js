@@ -1,8 +1,21 @@
+
+const obsController =  require("./obsController")
 var FB = require('fb');
-FB.setAccessToken('EAAeKlDx3HnsBAN3ZCr2nrnr6H3Atssib3rT00PseivNKijS0NLkx1FW18vs5lUupgPTaWEkK5vPTuCBMZCstrUFGCj1AQhyfiZCFYsZAcnGh5ZAzcKMc9NdSfJrmFsuOAlmic3Gnp2J6nkAhjPhcZAblCjpd8SvYp28UmxvHsNPEoqHLzZANZBTPYADrUX3QCH6MZBceeHV7cUPBhBXG227beHOHqVzZAq3zUQhatzlhUD8gZDZD');
+FB.setAccessToken('EAAeKlDx3HnsBAEZCQBvZAftVL1aG6q61RKzGIGeoLhgbBRbggkDKlP4XK4DB94aebIxwMA884LAyOPvZC90P5KXRRgIBchksGerHXOvjZBOiBnheSWX1yEtxlgkH00fCmOmJLd2gZAokRjFRfJq2t3EIHxzMjXTZBf9b1AZChIrEEFbIDVgZBHCIHuq7q3gc6l3t5fqG1CSywYMPB2ZBEdFmgSuWmYWBIqqETth1fVSRhZCQZDZD');
+const myController = new obsController()
+myController.Connect().then(state=>{
+    if(state){
+        console.log(state)
+        commentListining("4016367878423475")
+    }
+})
+
+
 let currentCommentsLength = 0;
-setInterval(() => {
-    FB.api('4015881245138805/comments', function (res) {
+
+function commentListining(videoLiveId) {
+    setInterval(() => {
+    FB.api(videoLiveId+'/comments', function (res) {
         if(!res || res.error) {
          console.log(!res ? 'error occurred' : res.error);
          return;
@@ -11,9 +24,11 @@ setInterval(() => {
         if(res.data.length >currentCommentsLength ){
             //save comments
             let comments = res.data;
+            // loop throw every new comment
             for(let i = currentCommentsLength;i<res.data.length;i++){
                     console.log(comments[i])
             }
+            // seeting current comment length to new length
             currentCommentsLength = res.data.length;
             
            // console.log(res.data.length);
@@ -24,3 +39,6 @@ setInterval(() => {
       
       });    
 }, 10000);
+}
+
+
