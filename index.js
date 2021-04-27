@@ -6,14 +6,15 @@ const myController = new obsController()
 myController.Connect().then(state=>{
     if(state){
         console.log(state)
-        commentListining("4016367878423475")
+        commentListining("4016429161750680")
     }
 })
 
 
-let currentCommentsLength = 0;
+
 
 function commentListining(videoLiveId) {
+    let currentCommentsLength = 0;
     setInterval(() => {
     FB.api(videoLiveId+'/comments', function (res) {
         if(!res || res.error) {
@@ -35,10 +36,11 @@ function commentListining(videoLiveId) {
         }else{
             console.log("nothing new")
         }
+
         
       
       });    
-}, 10000);
+}, 2000);
 }
 
 
