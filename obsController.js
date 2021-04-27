@@ -4,16 +4,18 @@ const chalk = require("chalk");
 class obsController {
   obs;
 
-  constructor() {
+  constructor(adress,password) {
     this.obs = new OBSWebSocket();
+    this.address = adress
+    this.password = password
   }
   // connect to obs
   async Connect() {
     let result = false;
     await this.obs
       .connect({
-        address: "localhost:4444",
-        password: "admin",
+        address: this.address ,
+        password: this.password,
       })
       .then(() => {
         console.log(chalk.green(`Success! We're connected & authenticated.`));

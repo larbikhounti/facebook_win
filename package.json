@@ -13,6 +13,7 @@
     "agentkeepalive": "^4.1.4",
     "axios": "^0.21.1",
     "chalk": "^4.1.1",
+    "eventsource": "^1.1.0",
     "fb": "^2.0.0",
     "got": "^11.8.2",
     "https": "^1.0.0",
