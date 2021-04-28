@@ -21,10 +21,11 @@ class obsController {
         console.log(chalk.green(`Success! We're connected & authenticated.`));
 
         // this.restartStream();
-        result = this.startStreaming();
+       result = this.startStreaming();
       });
     return result;
   }
+  /*
   //restart the stream
   restartStream() {
     this.obs.sendCallback(
@@ -38,6 +39,8 @@ class obsController {
       }
     );
   }
+  */
+  
   //start streaming
   async startStreaming() {
     let isStreamStarted = false;
@@ -46,13 +49,57 @@ class obsController {
       // if there is no errors
       if (streaming.status === "ok") {
         console.log(chalk.yellow("Stream Started "));
-
+        //set is Stream Started to true
         isStreamStarted = !isStreamStarted;
       } else {
         isStreamStarted;
       }
     });
     return isStreamStarted;
+  }
+
+  // switching scenes  will restart the count down 
+  switchScenes() {
+    this.obs.sendCallback(
+      "SetCurrentScene",
+      {
+        "scene-name": "secondary",
+        
+      },
+      (error,data) => {
+        if(error){
+          console.log(error) 
+        }else{
+          console.log(data)
+         let myInteval =  setInterval(() => {
+            this.obs.sendCallback(
+              "SetCurrentScene",
+              {
+                "scene-name": "primary",
+                
+              },
+              (error,data) => {
+                if(error){
+                  console.log(error) 
+                }else{
+                  console.log(data)
+                }
+                
+              }
+            );
+            clearInterval(myInteval);
+          }, 400);
+         
+         
+
+        }
+        
+      }
+    );
+  
+
+
+
   }
 }
 
