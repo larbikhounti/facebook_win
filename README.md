@@ -25,22 +25,6 @@ To run this project, you will need to add the following environment variables to
 `VIDEO_ID = your_live_facebook_video_id`
 
 
-
-
-
-
-  
-## Installation 
-
-Install my-project with npm
-
-
-    
-
-
-
-
-  
 ## steps 
 
 - add obs websocket plugin you can ge it from [obs-websocket](https://github.com/Palakis/obs-websocket/releases)
