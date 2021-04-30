@@ -6,7 +6,7 @@ const facebookAuth = require("./facebookAuth");
 const FB = new facebookAuth();
 const express = require("express");
 const app = express();
-const {startLiveVideo,privacies} = require("./VideoLiveConroller");
+const {startLiveVideo,privacies} = require("./facebookVideoLiveConroller");
 // create instance of OBS Controller and passing adress and password of obs socket
 const myController = new obsController(
   process.env.ADRESS,
