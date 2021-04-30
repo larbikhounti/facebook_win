@@ -29,11 +29,13 @@ class facebookAuth {
     );
     await fetch(url)
       .then((res) => res.json())
-      .then((json) => {
+      .then(async (json) => {
         if (json.access_token) {
           console.log(chalk.green("facebook access token connected."))
-         // save ACCESS_TOKEN in .env
-          process.env.ACCESS_TOKEN = json.access_token;
+          // save ACCESS_TOKEN in .env
+          //process.env.ACCESS_TOKEN = json.access_token; 
+          process.env.ACCESS_TOKEN = await  this.getPageAcessToken(json.access_token).then(pageToken=>pageToken);
+         // console.log(await  this.getPageAcessToken(json.access_token).then(pageToken=>pageToken))
           isAccessTokenPresent = true
 
         }
@@ -42,6 +44,23 @@ class facebookAuth {
 
     // return data.access_token;
     return isAccessTokenPresent
+  }
+  // get page Access token  from user access token
+ async getPageAcessToken(userAccesToken){
+   
+   let url = `https://graph.facebook.com/${process.env.PAGE_ID}?fields=access_token&access_token=${userAccesToken}`
+ return await fetch(url)
+  .then((res) => res.json())
+  .then((json) => {
+    if (json.access_token) {
+      console.log(chalk.green("facebook page access token connected."))
+      return json.access_token 
+    }else{
+      console.log(json)
+    }
+   
+  }).catch(ex=>console.log(ex));
+
   }
 }
 module.exports = facebookAuth;
