@@ -14,7 +14,6 @@ async function startLiveVideo(data) {
   )
     .then((res) => {
       console.log(chalk.green("facebook connected."));
-      console.log(res)
       return res.json();
     })
     .catch((ex) => console.log(ex));
