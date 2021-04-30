@@ -2,7 +2,7 @@ const queryString = require('query-string');
 const fetch = require('node-fetch');
 const open = require('open');
 require('dotenv').config();
-
+const chalk = require("chalk");
 class facebookAuth {
   constructor() {}
   // get user permissions
@@ -31,12 +31,13 @@ class facebookAuth {
       .then((res) => res.json())
       .then((json) => {
         if (json.access_token) {
+          console.log(chalk.green("facebook access token connected."))
          // save ACCESS_TOKEN in .env
           process.env.ACCESS_TOKEN = json.access_token;
           isAccessTokenPresent = true
 
         }
-        console.log(process.env.ACCESS_TOKEN);
+       
       }).catch(ex=>console.log(ex));
 
     // return data.access_token;

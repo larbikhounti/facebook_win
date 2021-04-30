@@ -11,6 +11,7 @@ class obsController {
   }
   // connect to obs
   async Connect(stream_url) {
+    console.log(chalk.yellow("connecting to obs... "));
     let result = false;
     await this.obs
       .connect({
@@ -18,12 +19,15 @@ class obsController {
         password: this.password,
       })
       .then(async () => {
-          console.log(chalk.green(`Success! We're connected & authenticated.`));
+          console.log(chalk.green(`obs connected.`));
           if(await this.setStreamKey(stream_url).then(state=>state)){
             result = await this.startStreaming();
           }
          
         // this.restartStream();
+      }).catch(ex=>{
+        
+        console.log(chalk.bgRed(ex.description))
       });
     return result;
   }
@@ -47,11 +51,11 @@ class obsController {
   //start streaming
   async startStreaming() {
     let isStreamStarted = false;
-
+    console.log(chalk.yellow("starting live stream..."));
     await this.obs.send("StartStreaming").then((streaming) => {
       // if there is no errors
       if (streaming.status === "ok") {
-        console.log(chalk.yellow("Stream Started "));
+        console.log(chalk.green("Stream Started."));
         //set is Stream Started to true
         isStreamStarted = !isStreamStarted;
       } else {
@@ -73,6 +77,7 @@ class obsController {
         if(error){
           console.log(error) 
         }else{
+        console.log(chalk.greenBright("CountDown Changed to start "));
          let myInteval =  setInterval(() => {
             this.obs.sendCallback(
               "SetCurrentScene",
@@ -81,10 +86,13 @@ class obsController {
                 
               },
               (error,data) => {
+                if(data.state === "ok"){
+                  
+                }
                 if(error){
                   console.log(error) 
                 }
-                
+               
               }
             );
             clearInterval(myInteval);
@@ -103,7 +111,7 @@ class obsController {
   }
   // save stream url to obs
   async setStreamKey(stream_url){
-   
+    console.log(chalk.bgGreen("setting obs stream key ..."));
     //SetStreamSettings
    let isStreamUrlSaved = false
     await this.obs.send("SetStreamSettings", { 
@@ -119,7 +127,7 @@ class obsController {
       // if there is no errors
       if (streaming.status === "ok") {
         //set is Stream key saved  to true
-        console.log(streaming)
+        console.log(chalk.green("obs stream key is set."));
         isStreamUrlSaved = !isStreamUrlSaved;
       } else {
         isStreamUrlSaved;

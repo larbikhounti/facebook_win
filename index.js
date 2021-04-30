@@ -1,5 +1,6 @@
 const obsController = require("./obsController");
 const EventSource = require("eventsource");
+const chalk = require("chalk");
 require("dotenv").config();
 const facebookAuth = require("./facebookAuth");
 const FB = new facebookAuth();
@@ -30,7 +31,6 @@ async function startLiveVideoStreaming() {
     process.env.STREAM_URL = secure_stream_url
     isLiveStremingOnFacebookStrated = true
   }
-  console.log("wjy why why 2"+secure_stream_url)
   return isLiveStremingOnFacebookStrated
 }
 
@@ -54,6 +54,7 @@ app.get("/authenticate/facebook/", (req, res) => {
 const port = 3000;
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
+  console.log(chalk.yellow("waiting for facebook permission ..."));
   // get user permissions
   FB.getUserpermissions();
 });
@@ -71,13 +72,15 @@ let source = new EventSource("https://streaming-graph.facebook.com/" +video_id+"
 myController.Connect(stream_url).then((state) => {
   if (state) {
       // if stream started listen for new comments
-    source.onmessage = function (event) {
-      console.log(event);
-      // if there is a comment restart countDown
+    source.onmessage = function (newComment) {
+     // console.log(event);
+     // if there is a new comment restart countDown
+     if(newComment){   
       myController.switchScenes() // restart countDown
+     }
+     
+     
     }
-  }else{
-      console.log(state)
   }
   
 });
