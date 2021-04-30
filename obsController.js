@@ -125,6 +125,7 @@ class obsController {
         isStreamUrlSaved;
       }
     }).catch(ex=>console.log(ex));
+    return isStreamUrlSaved
   }
 }
 
