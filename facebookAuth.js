@@ -10,7 +10,7 @@ class facebookAuth {
     const stringifiedParams = queryString.stringify({
       client_id: process.env.CLIENT_ID,
       redirect_uri: "http://localhost:3000/authenticate/facebook/",
-      scope: ["public_profile", "user_videos", "pages_show_list"].join(","), // comma seperated string
+      scope: ["public_profile", "pages_manage_posts","user_videos", "pages_show_list","user_events","pages_show_list","pages_read_engagement","pages_read_user_content"].join(","), // comma seperated string
       response_type: "code",
       auth_type: "rerequest",
       display: "popup",
@@ -34,9 +34,10 @@ class facebookAuth {
          // save ACCESS_TOKEN in .env
           process.env.ACCESS_TOKEN = json.access_token;
           isAccessTokenPresent = true
+
         }
         console.log(process.env.ACCESS_TOKEN);
-      });
+      }).catch(ex=>console.log(ex));
 
     // return data.access_token;
     return isAccessTokenPresent

@@ -1,6 +1,6 @@
 const OBSWebSocket = require("obs-websocket-js");
 const chalk = require("chalk");
-
+require('dotenv').config();
 class obsController {
   obs;
 
@@ -10,21 +10,24 @@ class obsController {
     this.password = password
   }
   // connect to obs
-  async Connect() {
+  async Connect(stream_url) {
     let result = false;
     await this.obs
       .connect({
         address: this.address ,
         password: this.password,
       })
-      .then(() => {
-        console.log(chalk.green(`Success! We're connected & authenticated.`));
-
+      .then(async () => {
+          console.log(chalk.green(`Success! We're connected & authenticated.`));
+          if(await this.setStreamKey(stream_url).then(state=>state)){
+            result = await this.startStreaming();
+          }
+         
         // this.restartStream();
-       result = this.startStreaming();
       });
     return result;
   }
+
   /*
   //restart the stream
   restartStream() {
@@ -70,7 +73,6 @@ class obsController {
         if(error){
           console.log(error) 
         }else{
-          console.log(data)
          let myInteval =  setInterval(() => {
             this.obs.sendCallback(
               "SetCurrentScene",
@@ -81,8 +83,6 @@ class obsController {
               (error,data) => {
                 if(error){
                   console.log(error) 
-                }else{
-                  console.log(data)
                 }
                 
               }
@@ -100,6 +100,31 @@ class obsController {
 
 
 
+  }
+  // save stream url to obs
+  async setStreamKey(stream_url){
+   
+    //SetStreamSettings
+   let isStreamUrlSaved = false
+    await this.obs.send("SetStreamSettings", { 
+      settings: {
+        bwtest: false,
+        key: stream_url,
+        server: 'rtmps://rtmp-api.facebook.com:443/rtmp/',
+        service: 'Facebook Live'
+      }
+
+      }).then((streaming) => {
+        
+      // if there is no errors
+      if (streaming.status === "ok") {
+        //set is Stream key saved  to true
+        console.log(streaming)
+        isStreamUrlSaved = !isStreamUrlSaved;
+      } else {
+        isStreamUrlSaved;
+      }
+    }).catch(ex=>console.log(ex));
   }
 }
 
