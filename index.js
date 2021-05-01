@@ -6,6 +6,7 @@ const facebookAuth = require("./facebookAuth");
 const FB = new facebookAuth();
 const express = require("express");
 const app = express();
+app.set('view engine', 'ejs');
 const {startLiveVideo,privacies} = require("./facebookVideoLiveConroller");
 // create instance of OBS Controller and passing adress and password of obs socket
 const myController = new obsController(
@@ -44,8 +45,9 @@ app.get("/authenticate/facebook/", (req, res) => {
     if (state) {
       if(await startLiveVideoStreaming().then(isLiveStarted=>isLiveStarted)){
           connectAndStartStreaming(process.env.STREAM_URL); 
+          res.render("success.ejs");
       }
-      res.send("access token ok");
+      
     }
   });
   
