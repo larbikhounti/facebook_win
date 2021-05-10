@@ -135,6 +135,32 @@ class obsController {
     }).catch(ex=>console.log(ex));
     return isStreamUrlSaved
   }
-}
+  async setTheImage() {
+   return await this.obs.send("GetSourceTypesList", { 
+      /*
+      settings: {
+        sourceKind: "image",
+        key: stream_url,
+        sourceName: 'primary',
+        service: 'Facebook Live'
+      }
+      */
+  
+      }).then((result) => {
+        
+      // if there is no errors
+      if (result.status === "ok") {
+        //set is Stream key saved  to true
+        console.log(chalk.green("obs stream key is set."));
+       // isStreamUrlSaved = !isStreamUrlSaved;
+       console.log(result)
+      } else {
+       // isStreamUrlSaved;
+      }
+    }).catch(ex=>console.log(ex));
+  }
+
+}//end of class
+ 
 
 module.exports = obsController;

@@ -81,11 +81,10 @@ myController.Connect(stream_url).then((state) => {
       myController.switchScenes() // restart countDown
       
       let comment = JSON.parse(newComment.data)
-     // let data = JSON.parse(comment)
-      console.log(typeof(comment));
-      console.log(comment.from.id);
-     let myresult  = await getUserPicture(comment.from.id).then(res=>res);
-      console.log(myresult)
+        // get the user picure url
+    // let myresult  =y await getUserPicture(comment.from.id).then(res=>res);
+     let obsSources = await obsController.setTheImage().then(res=>res)
+     console.log(obsSources);
 
      }
      
