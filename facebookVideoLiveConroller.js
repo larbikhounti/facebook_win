@@ -45,11 +45,30 @@ const getAllLiveVideos = (accessToken) => {
     .then((res) => res.json())
     .catch((ex) => console.log(ex));
 };
+//  const getUserPicture =  async (UID) => {
+//   //  "https://graph.facebook.com/v10.0/4014533155273614/picture?height=500&width=500"
+//  return  await fetch(
+//     `https://graph.facebook.com/v10.0/${UID}/picture?height=500&width=500&redirect=0`,
+//     { method: "GET"}
+//   )
+//     .then((res) => res.json())
+//     .catch((ex) => console.log(ex));
+// };
+async function getUserPicture(UID) {
+  
+  return  await fetch(
+    `https://graph.facebook.com/v10.0/${UID}/picture?height=500&width=500&redirect=0`,
+    { method: "GET"}
+  )
+    .then((res) => res.json())
+    .catch((ex) => console.log(ex));
+}
 
 exports.startLiveVideo = startLiveVideo;
 exports.deleteLiveVideo = deleteLiveVideo;
 exports.endLiveVideo = endLiveVideo;
 exports.getAllLiveVideos = getAllLiveVideos;
+exports.getUserPicture = getUserPicture;
 
 exports.privacies = {
   public: "{'value': 'EVERYONE'}",

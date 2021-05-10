@@ -7,7 +7,7 @@ const FB = new facebookAuth();
 const express = require("express");
 const app = express();
 app.set('view engine', 'ejs');
-const {startLiveVideo,privacies} = require("./facebookVideoLiveConroller");
+const {startLiveVideo,privacies,getUserPicture} = require("./facebookVideoLiveConroller");
 // create instance of OBS Controller and passing adress and password of obs socket
 const myController = new obsController(
   process.env.ADRESS,
@@ -74,11 +74,19 @@ let source = new EventSource("https://streaming-graph.facebook.com/" +video_id+"
 myController.Connect(stream_url).then((state) => {
   if (state) {
       // if stream started listen for new comments
-    source.onmessage = function (newComment) {
-     // console.log(event);
+    source.onmessage = async function  (newComment) {
+     console.log("listenning to comments");
      // if there is a new comment restart countDown
      if(newComment){   
       myController.switchScenes() // restart countDown
+      
+      let comment = JSON.parse(newComment.data)
+     // let data = JSON.parse(comment)
+      console.log(typeof(comment));
+      console.log(comment.from.id);
+     let myresult  = await getUserPicture(comment.from.id).then(res=>res);
+      console.log(myresult)
+
      }
      
      
