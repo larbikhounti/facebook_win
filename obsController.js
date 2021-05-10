@@ -1,8 +1,11 @@
 const OBSWebSocket = require("obs-websocket-js");
 const chalk = require("chalk");
+const fs = require('fs');
+const fetch = require('node-fetch');
 require("dotenv").config();
 class obsController {
   obs;
+  imageCount= 0;
 
   constructor(adress, password) {
     this.obs = new OBSWebSocket();
@@ -124,16 +127,18 @@ class obsController {
       .catch((ex) => console.log(ex));
     return isStreamUrlSaved;
   }
-  async setTheImage(myurl) {
-    return await this.obs
+  async setTheImage(image_url) {
+    let isImageSaved = await this.downloadAndSaveit(image_url).then(res=>res)
+    if(isImageSaved){
+      return await this.obs
       .send("SetSourceSettings", {
-        sourceName: "profile_pic",
+        sourceName: `profile_pic${this.imageCount}`,
         sourceSettings: {
           css: "",
           fps_custom: false,
           height: 300,
           reroute_audio: false,
-          url: myurl,
+          url: `./profile_pic/${this.imageCount}.jfif`,
           width: 300,
         },
       })
@@ -149,7 +154,46 @@ class obsController {
         }
       })
       .catch((ex) => console.log(ex));
+    }else{
+      console.log("cant save the profile picture")
+    }
+   
+   
   }
+
+  async  downloadAndSaveit(image_url) {
+    let isFinished = false;
+    const response = await fetch(image_url);
+    const buffer = await response.buffer();
+    switch (this.imageCount) {
+      case 0:
+        fs.writeFile(`./profile_pic/0.jfif`, buffer, () => console.log('finished downloading 0!'));
+        this.imageCount++;
+        isFinished = true
+        break;
+        case 1:
+          fs.writeFile(`./profile_pic/1.jfif`, buffer, () => console.log('finished downloading 1!'));
+          this.imageCount++
+          isFinished = true
+          break;
+          case 2:
+          fs.writeFile(`./profile_pic/2.jfif`, buffer, () => console.log('finished downloading 2!'));
+          this.imageCount++
+          isFinished = true
+          break;
+          case 3:
+          fs.writeFile(`./profile_pic/3.jfif`, buffer, () => console.log('finished downloading 3!'));
+          this.imageCount = 0;
+          isFinished = true
+          break;
+      default:
+        isFinished = false
+          break;
+    }
+    return isFinished;
+  }
+ 
+  
 } //end of class
 
 module.exports = obsController;

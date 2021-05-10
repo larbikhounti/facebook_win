@@ -54,10 +54,11 @@ const getAllLiveVideos = (accessToken) => {
 //     .then((res) => res.json())
 //     .catch((ex) => console.log(ex));
 // };
+
 async function getUserPicture(UID) {
   
   return  await fetch(
-    `https://graph.facebook.com/v10.0/${UID}/picture?height=500&width=500&redirect=0`,
+    `https://graph.facebook.com/v10.0/${UID}/picture?height=800&width=600&redirect=0`,
     { method: "GET"}
   )
     .then((res) => res.json())
