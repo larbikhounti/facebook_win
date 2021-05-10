@@ -1,13 +1,13 @@
 const OBSWebSocket = require("obs-websocket-js");
 const chalk = require("chalk");
-require('dotenv').config();
+require("dotenv").config();
 class obsController {
   obs;
 
-  constructor(adress,password) {
+  constructor(adress, password) {
     this.obs = new OBSWebSocket();
-    this.address = adress
-    this.password = password
+    this.address = adress;
+    this.password = password;
   }
   // connect to obs
   async Connect(stream_url) {
@@ -15,19 +15,19 @@ class obsController {
     let result = false;
     await this.obs
       .connect({
-        address: this.address ,
+        address: this.address,
         password: this.password,
       })
       .then(async () => {
-          console.log(chalk.green(`obs connected.`));
-          if(await this.setStreamKey(stream_url).then(state=>state)){
-            result = await this.startStreaming();
-          }
-         
+        console.log(chalk.green(`obs connected.`));
+        if (await this.setStreamKey(stream_url).then((state) => state)) {
+          result = await this.startStreaming();
+        }
+
         // this.restartStream();
-      }).catch(ex=>{
-        
-        console.log(chalk.bgRed(ex.description))
+      })
+      .catch((ex) => {
+        console.log(chalk.bgRed(ex.description));
       });
     return result;
   }
@@ -47,7 +47,7 @@ class obsController {
     );
   }
   */
-  
+
   //start streaming
   async startStreaming() {
     let isStreamStarted = false;
@@ -65,102 +65,91 @@ class obsController {
     return isStreamStarted;
   }
 
-  // switching scenes  will restart the count down 
+  // switching scenes  will restart the count down
   switchScenes() {
     this.obs.sendCallback(
       "SetCurrentScene",
       {
         "scene-name": "secondary",
-        
       },
-      (error,data) => {
-        if(error){
-          console.log(error) 
-        }else{
-        console.log(chalk.greenBright("CountDown Changed to start "));
-         let myInteval =  setInterval(() => {
+      (error, data) => {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log(chalk.greenBright("CountDown Changed to start "));
+          let myInteval = setInterval(() => {
             this.obs.sendCallback(
               "SetCurrentScene",
               {
                 "scene-name": "primary",
-                
               },
-              (error,data) => {
-                if(data.state === "ok"){
-                  
+              (error, data) => {
+                if (data.state === "ok") {
                 }
-                if(error){
-                  console.log(error) 
+                if (error) {
+                  console.log(error);
                 }
-               
               }
             );
             clearInterval(myInteval);
           }, 400);
-         
-         
-
         }
-        
       }
     );
-  
-
-
-
   }
   // save stream url to obs
-  async setStreamKey(stream_url){
+  async setStreamKey(stream_url) {
     console.log(chalk.bgGreen("setting obs stream key ..."));
     //SetStreamSettings
-   let isStreamUrlSaved = false
-    await this.obs.send("SetStreamSettings", { 
-      settings: {
-        bwtest: false,
-        key: stream_url,
-        server: 'rtmps://rtmp-api.facebook.com:443/rtmp/',
-        service: 'Facebook Live'
-      }
-
-      }).then((streaming) => {
-        
-      // if there is no errors
-      if (streaming.status === "ok") {
-        //set is Stream key saved  to true
-        console.log(chalk.green("obs stream key is set."));
-        isStreamUrlSaved = !isStreamUrlSaved;
-      } else {
-        isStreamUrlSaved;
-      }
-    }).catch(ex=>console.log(ex));
-    return isStreamUrlSaved
+    let isStreamUrlSaved = false;
+    await this.obs
+      .send("SetStreamSettings", {
+        settings: {
+          bwtest: false,
+          key: stream_url,
+          server: "rtmps://rtmp-api.facebook.com:443/rtmp/",
+          service: "Facebook Live",
+        },
+      })
+      .then((streaming) => {
+        // if there is no errors
+        if (streaming.status === "ok") {
+          //set is Stream key saved  to true
+          console.log(chalk.green("obs stream key is set."));
+          isStreamUrlSaved = !isStreamUrlSaved;
+        } else {
+          isStreamUrlSaved;
+        }
+      })
+      .catch((ex) => console.log(ex));
+    return isStreamUrlSaved;
   }
-  async setTheImage() {
-   return await this.obs.send("GetSourceTypesList", { 
-      /*
-      settings: {
-        sourceKind: "image",
-        key: stream_url,
-        sourceName: 'primary',
-        service: 'Facebook Live'
-      }
-      */
-  
-      }).then((result) => {
-        
-      // if there is no errors
-      if (result.status === "ok") {
-        //set is Stream key saved  to true
-        console.log(chalk.green("obs stream key is set."));
-       // isStreamUrlSaved = !isStreamUrlSaved;
-       console.log(result)
-      } else {
-       // isStreamUrlSaved;
-      }
-    }).catch(ex=>console.log(ex));
+  async setTheImage(myurl) {
+    return await this.obs
+      .send("SetSourceSettings", {
+        sourceName: "profile_pic",
+        sourceSettings: {
+          css: "",
+          fps_custom: false,
+          height: 300,
+          reroute_audio: false,
+          url: myurl,
+          width: 300,
+        },
+      })
+      .then((result) => {
+        // if there is no errors
+        if (result.status === "ok") {
+          //set is Stream key saved  to true
+          console.log(chalk.green("obs image is set."));
+          // isStreamUrlSaved = !isStreamUrlSaved;
+          console.log(result);
+        } else {
+          // isStreamUrlSaved;
+        }
+      })
+      .catch((ex) => console.log(ex));
   }
-
-}//end of class
- 
+} //end of class
 
 module.exports = obsController;

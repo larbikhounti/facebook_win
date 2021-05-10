@@ -44,7 +44,7 @@ app.get("/authenticate/facebook/", (req, res) => {
     // if the state is "true" that means we got the access token
     if (state) {
       if(await startLiveVideoStreaming().then(isLiveStarted=>isLiveStarted)){
-          connectAndStartStreaming(process.env.STREAM_URL); 
+         connectAndStartStreaming(process.env.STREAM_URL); 
           res.render("success.ejs");
       }
       
@@ -82,9 +82,10 @@ myController.Connect(stream_url).then((state) => {
       
       let comment = JSON.parse(newComment.data)
         // get the user picure url
-    // let myresult  =y await getUserPicture(comment.from.id).then(res=>res);
-     let obsSources = await obsController.setTheImage().then(res=>res)
-     console.log(obsSources);
+    let myImageResult  = await getUserPicture(comment.from.id).then(res=>res);
+     //console.log(myImageResult.data.url);
+     let obsSettings = await myController.setTheImage(myImageResult.data.url).then(res=>res)
+     console.log(obsSettings);
 
      }
      
