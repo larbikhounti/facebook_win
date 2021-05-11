@@ -7,6 +7,10 @@ require("dotenv").config();
 class obsController {
   obs;
   imageCount = 0;
+  interval0;
+  interval1;
+  interval2;
+  interval3;
 
   constructor(adress, password) {
     this.obs = new OBSWebSocket();
@@ -246,48 +250,60 @@ class obsController {
   WinnerCountDown(position)
 {
   let ctx = this;
-  let count = 60;
+  let count0 = 60;
+  let count1 = 60;
+  let count2 = 60;
+  let count3 = 60;
   switch (position) {
     case 0:
-      let interval0= setInterval(function() {
-        count--;
+      
+      clearInterval(this.interval0);
+      this.interval0= setInterval(function() {
+        count0--;
 
-        ctx.setUserCountDown(count,0)
-        if(count<=0){
+        ctx.setUserCountDown(count0,0)
+        if(count0<=0){
             clearInterval(interval0);
+            count0 = 60
         }
       }, 1000);
       
       break;
       case 1:
-        let interval1= setInterval(function() {
-          count--;
+       
+        this.interval1= setInterval(function() {
+          count1--;
   
-          ctx.setUserCountDown(count,1)
-          if(count<=0){
+          ctx.setUserCountDown(count1,1)
+          if(count1<=0){
               clearInterval(interval1);
+              count1 = 60
           }
         }, 1000);
         
         break;
         case 2:
-          let interval2= setInterval(function() {
-            count--;
+          
+          this.interval2= setInterval(function() {
+            count2--;
     
-            ctx.setUserCountDown(count,2)
-            if(count<=0){
+            ctx.setUserCountDown(count2,2)
+            if(count2<=0){
                 clearInterval(interval2);
+                count2 = 60
             }
           }, 1000);
           
           break;
           case 3:
-            let interval3= setInterval(function() {
-              count--;
+           
+            this.interval3= setInterval(function() {
+              count3--;
       
-              ctx.setUserCountDown(count,3)
-              if(count<=0){
+              ctx.setUserCountDown(count3,3)
+              if(count3<=0){
                   clearInterval(interval3);
+                  count3 = 60
               }
             }, 1000);
             
