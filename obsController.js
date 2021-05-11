@@ -11,7 +11,7 @@ class obsController {
   interval1;
   interval2;
   interval3;
-  thereIsaWinner = false
+  thereIsaWinner = false;
 
   constructor(adress, password) {
     this.obs = new OBSWebSocket();
@@ -148,28 +148,21 @@ class obsController {
           width: 300,
         },
       })
-      .then(async(result) => {
+      .then(async (result) => {
         // if there is no errors
         if (result.status === "ok") {
-           // if image path is set pn obs studio refresh browser
-          
-          
+          // if image path is set pn obs studio refresh browser
 
-            // await this.obs.send("RefreshBrowserSource", {
-            //   sourceName: `profile_pic${this.imageCount}`,
-            // })
-            // .then(
-            //   (res) =>
-            //     (res.status = "ok"
-            //       ? console.log("refreshed")
-            //       : console.log(" not refreshed"))
-            // );
+          // await this.obs.send("RefreshBrowserSource", {
+          //   sourceName: `profile_pic${this.imageCount}`,
+          // })
+          // .then(
+          //   (res) =>
+          //     (res.status = "ok"
+          //       ? console.log("refreshed")
+          //       : console.log(" not refreshed"))
+          // );
 
-
-         
-         
-        
-        
           //set is Stream key saved  to true
           console.log(chalk.green("obs image is set."));
 
@@ -182,7 +175,7 @@ class obsController {
     return isImageSaved;
   }
 
-  async downloadAndSaveit(image_url,user_name) {
+  async downloadAndSaveit(image_url, user_name) {
     let ctx = this;
     const response = await fetch(image_url);
     const buffer = await response.buffer();
@@ -191,7 +184,6 @@ class obsController {
         ctx.setUserName(user_name);
         this.imageCount++;
         return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
-          
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(0);
           });
@@ -201,7 +193,6 @@ class obsController {
         ctx.setUserName(user_name);
         this.imageCount++;
         return fs.writeFile(`./profile_pic/1.jfif`, buffer, async function () {
-         
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(1);
           });
@@ -211,7 +202,6 @@ class obsController {
         ctx.setUserName(user_name);
         this.imageCount++;
         return fs.writeFile(`./profile_pic/2.jfif`, buffer, async function () {
-         
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(2);
           });
@@ -221,7 +211,6 @@ class obsController {
         ctx.setUserName(user_name);
         this.imageCount = 0;
         return fs.writeFile(`./profile_pic/3.jfif`, buffer, async function () {
-     
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(3);
           });
@@ -231,101 +220,110 @@ class obsController {
         break;
     }
   }
- setUserName(user_name){
-   this.obs.send("SetSourceSettings", {
-    sourceName: `name${this.imageCount}`,
-   sourceSettings: { text: user_name }
-    
-  }).then(res=>console.log(res))
-
- }
- setUserCountDown(userCount,counttext){
-  this.obs.send("SetSourceSettings", {
-   sourceName: `countdown${counttext}`,
-  sourceSettings: { text: userCount.toString() }
-   
- }).then(res=>console.log(res))
-
-}
- // set the count down on user profiles
-  WinnerCountDown(position)
-{
-  let ctx = this;
-  let count0 = 60;
-  let count1 = 60;
-  let count2 = 60;
-  let count3 = 60;
-  if(this.thereIsaWinner == false){
-    switch (position) {
-      case 0:
-        
-        clearInterval(this.interval0);
-        this.interval0= setInterval(function() {
-          count0--;
-  
-          ctx.setUserCountDown(count0,0)
-          if(count0<=0){
-            ctx.cthereIsaWinner=true
-              count0 = 60
+  setUserName(user_name) {
+    this.obs
+      .send("SetSourceSettings", {
+        sourceName: `name${this.imageCount}`,
+        sourceSettings: { text: user_name },
+      })
+      .then((res) => console.log(res));
+  }
+  setUserCountDown(userCount, counttext) {
+    this.obs
+      .send("SetSourceSettings", {
+        sourceName: `countdown${counttext}`,
+        sourceSettings: { text: userCount.toString() },
+      })
+      .then((res) => console.log(res));
+  }
+  // set the count down on user profiles
+  WinnerCountDown(position) {
+    let ctx = this;
+    let count0 = 60;
+    let count1 = 60;
+    let count2 = 60;
+    let count3 = 60;
+    if (this.thereIsaWinner == false) {
+      switch (position) {
+        case 0:
+          clearInterval(this.interval0);
+          this.interval0 = setInterval(function () {
+            count0--;
+            if (ctx.thereIsaWinner === true) {
               clearInterval(ctx.interval0);
-          }
-        }, 1000);
-        
-        break;
+            } else {
+              ctx.setUserCountDown(count0, 0);
+              if (count0 <= 0) {
+                ctx.cthereIsaWinner = true;
+                //count0 = 60
+                ctx.setUserCountDown(count0, "WINNER");
+                clearInterval(ctx.interval0);
+              }
+            }
+          }, 1000);
+
+          break;
         case 1:
           clearInterval(this.interval1);
-          this.interval1= setInterval(function() {
+          this.interval1 = setInterval(function () {
             count1--;
-    
-            ctx.setUserCountDown(count1,1)
-            if(count1<=0){
-              ctx.thereIsaWinner=true
-                count1 = 60
+            if (ctx.thereIsaWinner === true) {
+              clearInterval(ctx.interval1);
+            } else {
+              ctx.setUserCountDown(count1, 1);
+              if (count1 <= 0) {
+                ctx.cthereIsaWinner = true;
+                //count0 = 60
+                ctx.setUserCountDown(count1, "WINNER");
                 clearInterval(ctx.interval1);
-     }
-          }, 1000);
-          
-          break;
-          case 2:
-            clearInterval(this.interval2);
-            this.interval2= setInterval(function() {
-              count2--;
-      
-              ctx.setUserCountDown(count2,2)
-              if(count2<=0){
-                ctx.thereIsaWinner=true
-                  count2 = 60
-                  clearInterval(ctx.interval2);
               }
-            }, 1000);
-            
-            break;
-            case 3:
-              clearInterval(this.interval3);
-              this.interval3= setInterval(function() {
-                count3--;
-        
-                ctx.setUserCountDown(count3,3)
-                if(count3<=0){
-                  ctx.thereIsaWinner=true
-                    count3 = 60
-                    clearInterval(ctx.interval2);
-                }
-              }, 1000);
-              
-              break;
-    
-      default:
-        break;
-    }
-    
+            }
+          }, 1000);
 
+          break;
+        case 2:
+          clearInterval(this.interval2);
+          this.interval2 = setInterval(function () {
+            count2--;
+            if (ctx.thereIsaWinner === true) {
+              clearInterval(ctx.interval2);
+              console.log("interval 2 stoped");
+            } else {
+              ctx.setUserCountDown(count2, 2);
+              if (count2 <= 0) {
+                ctx.thereIsaWinner = true;
+                //count2 = 60
+                ctx.setUserCountDown(count2, "WINNER");
+                clearInterval(ctx.interval2);
+              }
+            }
+          }, 1000);
+
+          break;
+        case 3:
+          clearInterval(this.interval3);
+          this.interval3 = setInterval(function () {
+            count3--;
+            if (ctx.thereIsaWinner === true) {
+              clearInterval(ctx.interval3);
+              console.log("interval 3 stoped");
+            } else {
+              ctx.setUserCountDown(count3, 3);
+              if (count3 <= 0) {
+                ctx.thereIsaWinner = true;
+                //count3 = 60
+                ctx.setUserCountDown(count3, "WINNER");
+                clearInterval(ctx.interval3);
+              }
+            }
+          }, 1000);
+          break;
+
+        default:
+          break;
+      }
+    }
   }
- 
-    
-  
-      
-}
 } //end of class
 
 module.exports = obsController;
