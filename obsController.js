@@ -142,12 +142,12 @@ class obsController {
           width: 300,
         },
       })
-      .then((result) => {
+      .then(async(result) => {
         // if there is no errors
         if (result.status === "ok") {
            // if image path is set pn obs studio refresh browser
-          this.obs
-            .send("RefreshBrowserSource", {
+           setTimeout(async()=>{
+            await this.obs.send("RefreshBrowserSource", {
               sourceName: `profile_pic${this.imageCount}`,
             })
             .then(
@@ -156,6 +156,12 @@ class obsController {
                   ? console.log("refreshed")
                   : console.log(" not refreshed"))
             );
+
+
+           },5000);
+         
+        
+        
           //set is Stream key saved  to true
           console.log(chalk.green("obs image is set."));
 
@@ -176,7 +182,7 @@ class obsController {
       case 0:
         this.imageCount++;
         return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
-          return ctx.setTheImage().then((res) => res);
+          return await ctx.setTheImage().then((res) => res);
         });
 
       case 1:
@@ -201,6 +207,7 @@ class obsController {
         break;
     }
   }
+  delay = ms => new Promise(res => setTimeout(res, ms));
 } //end of class
 
 module.exports = obsController;

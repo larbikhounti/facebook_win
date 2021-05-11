@@ -78,14 +78,17 @@ myController.Connect(stream_url).then((state) => {
      console.log("listenning to comments");
      // if there is a new comment restart countDown
      if(newComment){   
-      myController.switchScenes() // restart countDown
+     // myController.switchScenes() // restart countDown
       
       let comment = JSON.parse(newComment.data)
         // get the user picure url
     let myImageResult  = await getUserPicture(comment.from.id).then(res=>res);
      //console.log(myImageResult.data.url);
-     let obsSettings = await myController.downloadAndSaveit(myImageResult.data.url).then(res=>res)
-     console.log(obsSettings);
+     await myController.downloadAndSaveit(myImageResult.data.url).then(res=>{
+      myController.switchScenes()
+     })
+    
+     
 
      }
      
