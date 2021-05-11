@@ -128,75 +128,78 @@ class obsController {
     return isStreamUrlSaved;
   }
   async setTheImage() {
-   let isImageSaved = false;
-  
-      await this.obs
-        .send("SetSourceSettings", {
-          sourceName: `profile_pic${this.imageCount}`,
-          sourceSettings: {
-            css: "",
-            fps_custom: false,
-            height: 300,
-            reroute_audio: false,
-            url: process.cwd() + `/profile_pic/${this.imageCount}.jfif`,
-            width: 300,
-          },
-        })
-        .then((result) => {
-          // if there is no errors
-          if (result.status === "ok") {
-            //set is Stream key saved  to true
-            console.log(chalk.green("obs image is set."));
+    let isImageSaved = false;
 
-            isImageSaved = !isImageSaved;
-            
-          
-          } else {
-            isImageSaved;
-          }
-        })
-        .catch((ex) => console.log(ex));
-    return isImageSaved
+    await this.obs
+      .send("SetSourceSettings", {
+        sourceName: `profile_pic${this.imageCount}`,
+        sourceSettings: {
+          css: "",
+          fps_custom: false,
+          height: 300,
+          reroute_audio: false,
+          url: process.cwd() + `/profile_pic/${this.imageCount}.jfif`,
+          width: 300,
+        },
+      })
+      .then((result) => {
+        // if there is no errors
+        if (result.status === "ok") {
+           // if image path is set pn obs studio refresh browser
+          this.obs
+            .send("RefreshBrowserSource", {
+              sourceName: `profile_pic${this.imageCount}`,
+            })
+            .then(
+              (res) =>
+                (res.status = "ok"
+                  ? console.log("refreshed")
+                  : console.log(" not refreshed"))
+            );
+          //set is Stream key saved  to true
+          console.log(chalk.green("obs image is set."));
+
+          isImageSaved = !isImageSaved;
+        } else {
+          isImageSaved;
+        }
+      })
+      .catch((ex) => console.log(ex));
+    return isImageSaved;
   }
 
   async downloadAndSaveit(image_url) {
-    let ctx= this;
+    let ctx = this;
     const response = await fetch(image_url);
     const buffer = await response.buffer();
     switch (this.imageCount) {
       case 0:
         this.imageCount++;
-       return fs.writeFile(`./profile_pic/0.jfif`, buffer,async function () {
-          return ctx.setTheImage().then(res=>res)
-         
+        return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
+          return ctx.setTheImage().then((res) => res);
         });
-        
+
       case 1:
         this.imageCount++;
-        return fs.writeFile(`./profile_pic/1.jfif`, buffer,async function () {
-          return await ctx.setTheImage().then(res=>res)
-         
+        return fs.writeFile(`./profile_pic/1.jfif`, buffer, async function () {
+          return await ctx.setTheImage().then((res) => res);
         });
-       
+
       case 2:
         this.imageCount++;
-        return  fs.writeFile(`./profile_pic/2.jfif`, buffer,async function () {
-          return await ctx.setTheImage().then(res=>res)
-         
+        return fs.writeFile(`./profile_pic/2.jfif`, buffer, async function () {
+          return await ctx.setTheImage().then((res) => res);
         });
-       
+
       case 3:
         this.imageCount = 0;
-        return fs.writeFile(`./profile_pic/3.jfif`, buffer,async function () {
-         return await ctx.setTheImage().then(res=>res)
-         
+        return fs.writeFile(`./profile_pic/3.jfif`, buffer, async function () {
+          return await ctx.setTheImage().then((res) => res);
         });
-     
+
       default:
-        
         break;
     }
-   
   }
 } //end of class
 
