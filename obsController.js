@@ -2,6 +2,7 @@ const OBSWebSocket = require("obs-websocket-js");
 const chalk = require("chalk");
 const fs = require("fs");
 const fetch = require("node-fetch");
+const { stringify } = require("query-string");
 require("dotenv").config();
 class obsController {
   obs;
@@ -146,19 +147,21 @@ class obsController {
         // if there is no errors
         if (result.status === "ok") {
            // if image path is set pn obs studio refresh browser
-           setTimeout(async()=>{
-            await this.obs.send("RefreshBrowserSource", {
-              sourceName: `profile_pic${this.imageCount}`,
-            })
-            .then(
-              (res) =>
-                (res.status = "ok"
-                  ? console.log("refreshed")
-                  : console.log(" not refreshed"))
-            );
+          
+          
+
+            // await this.obs.send("RefreshBrowserSource", {
+            //   sourceName: `profile_pic${this.imageCount}`,
+            // })
+            // .then(
+            //   (res) =>
+            //     (res.status = "ok"
+            //       ? console.log("refreshed")
+            //       : console.log(" not refreshed"))
+            // );
 
 
-           },5000);
+         
          
         
         
@@ -185,7 +188,7 @@ class obsController {
         return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
           
           return await ctx.setTheImage().then((res) => {
-
+            ctx.WinnerCountDown();
           });
         });
 
@@ -229,6 +232,29 @@ class obsController {
   }).then(res=>console.log(res))
 
  }
+ setUserCountDown(userCount){
+  this.obs.send("SetSourceSettings", {
+   sourceName: `countdown0`,
+  sourceSettings: { text: userCount.toString() }
+   
+ }).then(res=>console.log(res))
+
+}
+ // set the count down on user profiles
+  WinnerCountDown()
+{
+  let ctx = this;
+    let count = 60;
+    var interval0 = setInterval(function() {
+        count--;
+        ctx.setUserCountDown(count)
+        if(count<=0){
+            clearInterval(interval0);
+        }
+      }, 1000);
+      
+      
+}
 } //end of class
 
 module.exports = obsController;
