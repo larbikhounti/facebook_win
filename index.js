@@ -84,7 +84,7 @@ myController.Connect(stream_url).then((state) => {
         // get the user picure url
     let myImageResult  = await getUserPicture(comment.from.id).then(res=>res);
      //console.log(myImageResult.data.url);
-     let obsSettings = await myController.setTheImage(myImageResult.data.url).then(res=>res)
+     let obsSettings = await myController.downloadAndSaveit(myImageResult.data.url).then(res=>res)
      console.log(obsSettings);
 
      }
