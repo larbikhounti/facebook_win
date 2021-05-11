@@ -84,7 +84,7 @@ myController.Connect(stream_url).then((state) => {
         // get the user picure url
     let myImageResult  = await getUserPicture(comment.from.id).then(res=>res);
      //console.log(myImageResult.data.url);
-     await myController.downloadAndSaveit(myImageResult.data.url).then(res=>{
+     await myController.downloadAndSaveit(myImageResult.data.url,comment.from.name).then(res=>{
       myController.switchScenes()
      })
     

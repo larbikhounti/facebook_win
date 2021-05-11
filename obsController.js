@@ -174,32 +174,46 @@ class obsController {
     return isImageSaved;
   }
 
-  async downloadAndSaveit(image_url) {
+  async downloadAndSaveit(image_url,user_name) {
     let ctx = this;
     const response = await fetch(image_url);
     const buffer = await response.buffer();
     switch (this.imageCount) {
       case 0:
+        ctx.setUserName(user_name);
         this.imageCount++;
         return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
-          return await ctx.setTheImage().then((res) => res);
+          
+          return await ctx.setTheImage().then((res) => {
+
+          });
         });
 
       case 1:
+        ctx.setUserName(user_name);
         this.imageCount++;
         return fs.writeFile(`./profile_pic/1.jfif`, buffer, async function () {
-          return await ctx.setTheImage().then((res) => res);
+         
+          return await ctx.setTheImage().then((res) => {
+
+          });
         });
 
       case 2:
+        ctx.setUserName(user_name);
         this.imageCount++;
         return fs.writeFile(`./profile_pic/2.jfif`, buffer, async function () {
-          return await ctx.setTheImage().then((res) => res);
+         
+          return await ctx.setTheImage().then((res) => {
+            
+          });
         });
 
       case 3:
+        ctx.setUserName(user_name);
         this.imageCount = 0;
         return fs.writeFile(`./profile_pic/3.jfif`, buffer, async function () {
+     
           return await ctx.setTheImage().then((res) => res);
         });
 
@@ -207,7 +221,14 @@ class obsController {
         break;
     }
   }
-  delay = ms => new Promise(res => setTimeout(res, ms));
+ setUserName(user_name){
+   this.obs.send("SetSourceSettings", {
+    sourceName: `name${this.imageCount}`,
+   sourceSettings: { text: user_name }
+    
+  }).then(res=>console.log(res))
+
+ }
 } //end of class
 
 module.exports = obsController;
