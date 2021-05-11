@@ -254,7 +254,7 @@ class obsController {
             } else {
               ctx.setUserCountDown(count0, 0);
               if (count0 <= 0) {
-                ctx.cthereIsaWinner = true;
+                ctx.thereIsaWinner = true;
                 //count0 = 60
                 ctx.setUserCountDown(count0, "WINNER");
                 clearInterval(ctx.interval0);
@@ -272,9 +272,9 @@ class obsController {
             } else {
               ctx.setUserCountDown(count1, 1);
               if (count1 <= 0) {
-                ctx.cthereIsaWinner = true;
+                ctx.thereIsaWinner = true;
                 //count0 = 60
-                ctx.setUserCountDown(count1, "WINNER");
+                ctx.setUserCountDown("winner", 1);
                 clearInterval(ctx.interval1);
               }
             }
@@ -293,7 +293,7 @@ class obsController {
               if (count2 <= 0) {
                 ctx.thereIsaWinner = true;
                 //count2 = 60
-                ctx.setUserCountDown(count2, "WINNER");
+                ctx.setUserCountDown("winner", 2);
                 clearInterval(ctx.interval2);
               }
             }
@@ -312,7 +312,7 @@ class obsController {
               if (count3 <= 0) {
                 ctx.thereIsaWinner = true;
                 //count3 = 60
-                ctx.setUserCountDown(count3, "WINNER");
+                ctx.setUserCountDown("winner", 3);
                 clearInterval(ctx.interval3);
               }
             }
