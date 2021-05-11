@@ -11,6 +11,7 @@ class obsController {
   interval1;
   interval2;
   interval3;
+  thereIsaWinner = false
 
   constructor(adress, password) {
     this.obs = new OBSWebSocket();
@@ -254,65 +255,72 @@ class obsController {
   let count1 = 60;
   let count2 = 60;
   let count3 = 60;
-  switch (position) {
-    case 0:
-      
-      clearInterval(this.interval0);
-      this.interval0= setInterval(function() {
-        count0--;
-
-        ctx.setUserCountDown(count0,0)
-        if(count0<=0){
-            clearInterval(interval0);
-            count0 = 60
-        }
-      }, 1000);
-      
-      break;
-      case 1:
-       
-        this.interval1= setInterval(function() {
-          count1--;
+  if(this.thereIsaWinner == false){
+    switch (position) {
+      case 0:
+        
+        clearInterval(this.interval0);
+        this.interval0= setInterval(function() {
+          count0--;
   
-          ctx.setUserCountDown(count1,1)
-          if(count1<=0){
-              clearInterval(interval1);
-              count1 = 60
+          ctx.setUserCountDown(count0,0)
+          if(count0<=0){
+            ctx.cthereIsaWinner=true
+              count0 = 60
+              clearInterval(ctx.interval0);
           }
         }, 1000);
         
         break;
-        case 2:
-          
-          this.interval2= setInterval(function() {
-            count2--;
+        case 1:
+          clearInterval(this.interval1);
+          this.interval1= setInterval(function() {
+            count1--;
     
-            ctx.setUserCountDown(count2,2)
-            if(count2<=0){
-                clearInterval(interval2);
-                count2 = 60
-            }
+            ctx.setUserCountDown(count1,1)
+            if(count1<=0){
+              ctx.thereIsaWinner=true
+                count1 = 60
+                clearInterval(ctx.interval1);
+     }
           }, 1000);
           
           break;
-          case 3:
-           
-            this.interval3= setInterval(function() {
-              count3--;
+          case 2:
+            clearInterval(this.interval2);
+            this.interval2= setInterval(function() {
+              count2--;
       
-              ctx.setUserCountDown(count3,3)
-              if(count3<=0){
-                  clearInterval(interval3);
-                  count3 = 60
+              ctx.setUserCountDown(count2,2)
+              if(count2<=0){
+                ctx.thereIsaWinner=true
+                  count2 = 60
+                  clearInterval(ctx.interval2);
               }
             }, 1000);
             
             break;
-  
-    default:
-      break;
+            case 3:
+              clearInterval(this.interval3);
+              this.interval3= setInterval(function() {
+                count3--;
+        
+                ctx.setUserCountDown(count3,3)
+                if(count3<=0){
+                  ctx.thereIsaWinner=true
+                    count3 = 60
+                    clearInterval(ctx.interval2);
+                }
+              }, 1000);
+              
+              break;
+    
+      default:
+        break;
+    }
+    
+
   }
-  
  
     
   
