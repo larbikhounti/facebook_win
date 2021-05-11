@@ -187,8 +187,8 @@ class obsController {
         this.imageCount++;
         return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
           
-          return await ctx.setTheImage().then((res) => {
-            ctx.WinnerCountDown();
+          return await ctx.setTheImage().then(() => {
+            ctx.WinnerCountDown(0);
           });
         });
 
@@ -197,8 +197,8 @@ class obsController {
         this.imageCount++;
         return fs.writeFile(`./profile_pic/1.jfif`, buffer, async function () {
          
-          return await ctx.setTheImage().then((res) => {
-
+          return await ctx.setTheImage().then(() => {
+            ctx.WinnerCountDown(1);
           });
         });
 
@@ -207,8 +207,8 @@ class obsController {
         this.imageCount++;
         return fs.writeFile(`./profile_pic/2.jfif`, buffer, async function () {
          
-          return await ctx.setTheImage().then((res) => {
-            
+          return await ctx.setTheImage().then(() => {
+            ctx.WinnerCountDown(2);
           });
         });
 
@@ -217,7 +217,9 @@ class obsController {
         this.imageCount = 0;
         return fs.writeFile(`./profile_pic/3.jfif`, buffer, async function () {
      
-          return await ctx.setTheImage().then((res) => res);
+          return await ctx.setTheImage().then(() => {
+            ctx.WinnerCountDown(3);
+          });
         });
 
       default:
@@ -232,27 +234,72 @@ class obsController {
   }).then(res=>console.log(res))
 
  }
- setUserCountDown(userCount){
+ setUserCountDown(userCount,counttext){
   this.obs.send("SetSourceSettings", {
-   sourceName: `countdown0`,
+   sourceName: `countdown${counttext}`,
   sourceSettings: { text: userCount.toString() }
    
  }).then(res=>console.log(res))
 
 }
  // set the count down on user profiles
-  WinnerCountDown()
+  WinnerCountDown(position)
 {
   let ctx = this;
-    let count = 60;
-    var interval0 = setInterval(function() {
+  let count = 60;
+  switch (position) {
+    case 0:
+      let interval0= setInterval(function() {
         count--;
-        ctx.setUserCountDown(count)
+
+        ctx.setUserCountDown(count,0)
         if(count<=0){
             clearInterval(interval0);
         }
       }, 1000);
       
+      break;
+      case 1:
+        let interval1= setInterval(function() {
+          count--;
+  
+          ctx.setUserCountDown(count,1)
+          if(count<=0){
+              clearInterval(interval1);
+          }
+        }, 1000);
+        
+        break;
+        case 2:
+          let interval2= setInterval(function() {
+            count--;
+    
+            ctx.setUserCountDown(count,2)
+            if(count<=0){
+                clearInterval(interval2);
+            }
+          }, 1000);
+          
+          break;
+          case 3:
+            let interval3= setInterval(function() {
+              count--;
+      
+              ctx.setUserCountDown(count,3)
+              if(count<=0){
+                  clearInterval(interval3);
+              }
+            }, 1000);
+            
+            break;
+  
+    default:
+      break;
+  }
+  
+ 
+    
+  
       
 }
 } //end of class
