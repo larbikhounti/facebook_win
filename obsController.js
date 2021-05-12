@@ -332,6 +332,7 @@ class obsController {
       },
       (error, data) => {
         if (data.status === "ok") {
+          this.setWinnerNameAndProfilePic(user_name,index)
           let myInteval = setInterval(() => {
             this.obs.sendCallback(
               "SetCurrentScene",
@@ -359,6 +360,7 @@ class obsController {
 
   }
   setWinnerNameAndProfilePic(user_name,image_index) {
+    
     this.obs
       .send("SetSourceSettings", {
         sourceName: `winnername`,
@@ -400,8 +402,10 @@ async  setWinnerProfilePic(image_index){
     })
     .then((res) => {
       if (res.status== "ok") {
+       
         let user_name = res.sourceSettings.text;
-        this.SwitchSceneAndSetTheWinner(index,user_name)
+        console.log(`winner name is ${user_name}`)
+        this.SwitchSceneAndSetTheWinner(index,user_name);
       //  this.SwitchSceneAndSetTheWinner(index,)
      // console.log(res.sourceSettings.text)
       }
