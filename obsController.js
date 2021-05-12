@@ -328,11 +328,28 @@ class obsController {
     this.obs.sendCallback(
       "SetCurrentScene",
       {
-        "scene-name": "winner",
+        "scene-name": "secondary",
       },
       (error, data) => {
         if (data.status === "ok") {
-          this.setWinnerNameAndProfilePic(user_name,index)
+          let myInteval = setInterval(() => {
+            this.obs.sendCallback(
+              "SetCurrentScene",
+              {
+                "scene-name": "winner",
+              },
+              (error, data) => {
+                if (data.state === "ok") {
+                  console.log("winner was set")
+                }
+                if (error) {
+                  console.log(error);
+                }
+              }
+            );
+            clearInterval(myInteval);
+          }, 400);
+         
         }
         if (error) {
           console.log(error);
