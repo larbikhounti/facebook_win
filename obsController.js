@@ -72,7 +72,7 @@ class obsController {
       } else {
         isStreamStarted;
       }
-    });
+    }).catch(ex=>console.log(ex));
     return isStreamStarted;
   }
 
@@ -328,29 +328,19 @@ class obsController {
     this.obs.sendCallback(
       "SetCurrentScene",
       {
-        "scene-name": "secondary",
+        "scene-name": "winner",
       },
       (error, data) => {
         if (data.status === "ok") {
-          this.setWinnerNameAndProfilePic(user_name,index)
-          let myInteval = setInterval(() => {
-            this.obs.sendCallback(
-              "SetCurrentScene",
-              {
-                "scene-name": "winner",
-              },
-              (error, data) => {
-                if (data.state === "ok") {
-                  console.log("winner was set")
-                }
-                if (error) {
-                  console.log(error);
-                }
-              }
-            );
-            clearInterval(myInteval);
-          }, 400);
-         
+          this.setWinnerNameAndProfilePic(user_name,index).then(async res=>{
+            if(res){
+              await this.obs.send("RefreshBrowserSource", {
+                sourceName : "profile_pic"
+                }).then(res=>{
+               console.log(res);
+            })
+            }
+          }).catch(ex=>console.log(ex))
         }
         if (error) {
           console.log(error);
@@ -359,21 +349,21 @@ class obsController {
     );
 
   }
-  setWinnerNameAndProfilePic(user_name,image_index) {
+ async setWinnerNameAndProfilePic(user_name,image_index) {
     
-    this.obs
+  await  this.obs
       .send("SetSourceSettings", {
         sourceName: `winnername`,
         sourceSettings: { text: user_name },
       })
-      .then((res) => {
+      .then(async(res) => {
         if (res.status == "ok") {
-          this.setWinnerProfilePic(image_index)
+        return await this.setWinnerProfilePic(image_index).then(res=>res)
         }
       }).catch(ex=>console.log(ex));
   }
 async  setWinnerProfilePic(image_index){
-    await this.obs
+   return await this.obs
       .send("SetSourceSettings", {
         sourceName: `profile_pic`,
         sourceSettings: {
@@ -389,6 +379,7 @@ async  setWinnerProfilePic(image_index){
         // if there is no errors
         if (result.status === "ok") {
           console.log(chalk.green("winner profile pic is set"));
+          return true
          
         } 
       })
