@@ -3,6 +3,7 @@ const chalk = require("chalk");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const { stringify } = require("query-string");
+const globalSettings = require("./globalSettings");
 require("dotenv").config();
 class obsController {
   obs;
@@ -225,10 +226,10 @@ class obsController {
   // set the count down on user profiles
   WinnerCountDown(position) {
     let ctx = this;
-    let count0 = 10;
-    let count1 = 60;
-    let count2 = 60;
-    let count3 = 60;
+    let count0 = parseInt(process.env.COUNT0);
+    let count1 = parseInt(process.env.COUNT1);
+    let count2 = parseInt(process.env.COUNT2);
+    let count3 = parseInt(process.env.COUNT3);
     if (this.thereIsaWinner == false) {
       switch (position) {
         case 0:
@@ -243,7 +244,9 @@ class obsController {
                 ctx.thereIsaWinner = true;
                 //count0 = 60
                 ctx.setUserCountDown("winner", 0);
+                // will stop the countdown
                 clearInterval(ctx.interval0);
+                //will find the winner and display it
                 ctx.getSourceSettings(0);
               }
             }
@@ -263,6 +266,8 @@ class obsController {
                 //count0 = 60
                 ctx.setUserCountDown("winner", 1);
                 clearInterval(ctx.interval1);
+                 //will find the winner and display it
+                 ctx.getSourceSettings(1);
               }
             }
           }, 1000);
@@ -282,6 +287,8 @@ class obsController {
                 //count2 = 60
                 ctx.setUserCountDown("winner", 2);
                 clearInterval(ctx.interval2);
+                  //will find the winner and display it
+                  ctx.getSourceSettings(2);
               }
             }
           }, 1000);
@@ -301,6 +308,8 @@ class obsController {
                 //count3 = 60
                 ctx.setUserCountDown("winner", 3);
                 clearInterval(ctx.interval3);
+                  //will find the winner and display it
+                  ctx.getSourceSettings(3);
                 
               }
             }
@@ -366,6 +375,7 @@ async  setWinnerProfilePic(image_index){
       .catch((ex) => console.log(ex));
   }
  async getSourceSettings(index){
+   globalSettings.isCommentsAllowed = false;
   return await this.obs
     .send("GetSourceSettings", {
       sourceName: `name${index}`
