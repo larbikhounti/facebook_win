@@ -103,7 +103,7 @@ class obsController {
               }
             );
             clearInterval(myInteval);
-          }, 400);
+          }, 300);
         }
       }
     );
