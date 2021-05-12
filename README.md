@@ -12,7 +12,7 @@ to  restart.
 ## Variables needed
 
 To run this project, you will need to add the following environment variables to your .env file
-
+#### obs 26.1.1
 #### obs config
 `ADRESS = localhost:4444`
 
