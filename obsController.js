@@ -6,7 +6,7 @@ const { stringify } = require("query-string");
 const globalSettings = require("./globalSettings");
 require("dotenv").config();
 class obsController {
-  obs;
+   obs;
   imageCount = 0;
   interval0;
   interval1;
@@ -18,6 +18,7 @@ class obsController {
     this.obs = new OBSWebSocket();
     this.address = adress;
     this.password = password;
+    
   }
   // connect to obs
   async Connect(stream_url) {
@@ -390,6 +391,43 @@ async  setWinnerProfilePic(image_index){
     }).catch(ex=>console.log(ex));
 
   }
+async getSourceSettingsForStartingCountDown(){
+    globalSettings.isCommentsAllowed = false;
+  return await this.obs.send("GetSourceSettings", {
+       sourceName: `startingcountdown`
+     })
+     .then((res) => {
+       return res;
+      //  if (res.status== "ok") {
+      //    let isCountDownStarted = res.sourceSettings.text;
+      //    if(isCountDownStarted === "start" ){
+      //     globalSettings.isLiveJustStared = true;
+      //     return true;
+      //    }
+      //  }else{
+      //    return false
+      //  }
+     }).catch(ex=>console.log(ex));
+  
+   }
+   switchToPrimary(){
+    this.obs.sendCallback(
+      "SetCurrentScene",
+      {
+        "scene-name": "primary",
+      },
+      (error, data) => {
+        if (data.state === "ok") {
+          console.log("switched");
+        }
+        if (error) {
+          console.log(error);
+        }
+      }
+    );
+   }
+   
 } //end of class
 
 module.exports = obsController;
+

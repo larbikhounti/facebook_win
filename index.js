@@ -19,6 +19,7 @@ const myController = new obsController(
   process.env.PASSWORD
 );
 
+
 // start live streaming on facebook and get post id and stream url
 async function startLiveVideoStreaming() {
   let data = {
@@ -64,6 +65,7 @@ app.listen(port, () => {
 });
 
 function connectAndStartStreaming(stream_url) {
+  let ctx = this;
   // setting token and video id
   let access_token = process.env.ACCESS_TOKEN;
   let video_id = process.env.VIDEO_ID;
@@ -76,32 +78,49 @@ function connectAndStartStreaming(stream_url) {
   );
 
   // connecting to obs and starting the stream
-
-  myController.Connect(stream_url).then((state) => {
-    if (state) {
-      // if stream started listen for new comments
-      source.onmessage = async function (newComment) {
-        console.log("listenning to comments");
-        // if there is a new comment restart countDown
-        if (newComment) {
-          // if user is allowed to comment
-          if (globalSettings.isCommentsAllowed) {
-            // myController.switchScenes() // restart countDown
   
-            let comment = JSON.parse(newComment.data);
-            // get the user picure url
-            let myImageResult = await getUserPicture(comment.from.id).then(
-              (res) => res
-            );
-            //console.log(myImageResult.data.url);
-            await myController
-              .downloadAndSaveit(myImageResult.data.url, comment.from.name)
-              .then((res) => {
-                myController.switchScenes();
-              });
-          }
-        }
-      };
+  myController.Connect(stream_url).then((state) => {
+    
+    if (state) {
+      if(globalSettings.isLiveJustStared=== false){
+        let interval = setInterval(function () {
+          myController.getSourceSettingsForStartingCountDown().then(res=>{
+            if(res.sourceSettings.text === "start"){
+              globalSettings.isCommentsAllowed = true;
+              myController.switchToPrimary();
+              source.onmessage = async function (newComment) {
+              
+                console.log("listenning to comments");
+                // if there is a new comment restart countDown
+                if (newComment) {
+                  // if user is allowed to comment
+                  if (globalSettings.isCommentsAllowed) {
+                    // myController.switchScenes() // restart countDown
+          
+                    let comment = JSON.parse(newComment.data);
+                    // get the user picure url
+                    let myImageResult = await getUserPicture(comment.from.id).then(
+                      (res) => res
+                    );
+                    //console.log(myImageResult.data.url);
+                    await myController
+                      .downloadAndSaveit(myImageResult.data.url, comment.from.name)
+                      .then((res) => {
+                        myController.switchScenes();
+                      });
+                  }
+                }
+              };
+              clearInterval(interval)
+              
+            }else{
+              console.log(res)
+            }
+          })
+          
+        }, 1000);
+      }
     }
   });
 }
+
