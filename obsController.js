@@ -37,8 +37,8 @@ class obsController {
 
         // this.restartStream();
       })
-      .catch((ex) => {
-        console.log(chalk.bgRed(ex.description));
+      .catch(ex => {
+        console.log(ex);
       });
     return result;
   }
@@ -146,7 +146,7 @@ class obsController {
           fps_custom: false,
           height: 300,
           reroute_audio: false,
-          url: process.cwd() + `/profile_pic/${this.imageCount}.jfif`,
+          url: process.cwd() + `/profile_pic/${this.imageCount}.html`,
           width: 300,
         },
       })
@@ -165,13 +165,15 @@ class obsController {
 
   async downloadAndSaveit(image_url, user_name) {
     let ctx = this;
-    const response = await fetch(image_url);
-    const buffer = await response.buffer();
+   // const response = await fetch(image_url);
+    let content = "<html><head><meta http-equiv='refresh' content='5' /><style>body{overflow-x:hidden;overflow-y:hidden} img{height: 100vh;width: 100vw;}</style></head><body height='100vh'><img  src='"+image_url+"'><script></script></body></html>"
+
+   // const buffer = await response.buffer();
     switch (this.imageCount) {
       case 0:
         ctx.setUserName(user_name);
         this.imageCount++;
-        return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/0.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(0);
           });
@@ -180,7 +182,7 @@ class obsController {
       case 1:
         ctx.setUserName(user_name);
         this.imageCount++;
-        return fs.writeFile(`./profile_pic/1.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/1.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(1);
           });
@@ -189,7 +191,7 @@ class obsController {
       case 2:
         ctx.setUserName(user_name);
         this.imageCount++;
-        return fs.writeFile(`./profile_pic/2.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/2.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(2);
           });
@@ -198,7 +200,7 @@ class obsController {
       case 3:
         ctx.setUserName(user_name);
         this.imageCount = 0;
-        return fs.writeFile(`./profile_pic/3.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/3.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(3);
           });
@@ -371,7 +373,7 @@ async  setWinnerProfilePic(image_index){
           fps_custom: false,
           height: 300,
           reroute_audio: false,
-          url: process.cwd() + `/profile_pic/${image_index}.jfif`,
+          url: process.cwd() + `/profile_pic/${image_index}.html`,
           width: 300,
         },
       })

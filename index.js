@@ -106,7 +106,7 @@ function connectAndStartStreaming(stream_url) {
                     await myController
                       .downloadAndSaveit(myImageResult.data.url, comment.from.name)
                       .then((res) => {
-                        myController.switchScenes();
+                       // myController.switchScenes();
                       });
                   }
                 }
