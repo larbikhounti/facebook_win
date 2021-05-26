@@ -87,6 +87,7 @@ function connectAndStartStreaming(stream_url) {
           myController.getSourceSettingsForStartingCountDown().then(res=>{
             if(res.sourceSettings.text === "start"){
               globalSettings.isCommentsAllowed = true;
+              myController.getSourceSettingsForUsersCountDown().catch(ex=>console.log(ex))
               myController.switchToPrimary();
               source.onmessage = async function (newComment) {
               

@@ -410,6 +410,7 @@ async  setWinnerProfilePic(image_index){
     }).catch(ex=>console.log(ex));
 
   }
+
 async getSourceSettingsForStartingCountDown(){
     globalSettings.isCommentsAllowed = false;
   return await this.obs.send("GetSourceSettings", {
@@ -429,6 +430,20 @@ async getSourceSettingsForStartingCountDown(){
      }).catch(ex=>console.log(ex));
   
    }
+
+   async getSourceSettingsForUsersCountDown(){
+    let countDown = setInterval(async() => {
+     await this.obs.send("GetSourceSettings", {
+        sourceName: `countDown`
+      })
+      .then((res) => {
+        console.log("game count down "+res.sourceSettings.text);
+      }).catch(ex=>console.log(ex));
+   
+    }, 1000);
+ 
+   }
+
    switchToPrimary(){
     this.obs.sendCallback(
       "SetCurrentScene",
