@@ -438,6 +438,10 @@ async getSourceSettingsForStartingCountDown(){
       })
       .then((res) => {
         console.log("game count down "+res.sourceSettings.text);
+        if(res.sourceSettings.text == "end"){
+          globalSettings.isCommentsAllowed = false;
+          clearInterval(countDown)
+        }
       }).catch(ex=>console.log(ex));
    
     }, 1000);
