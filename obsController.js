@@ -154,6 +154,11 @@ class obsController {
         // if there is no errors
         if (result.status === "ok") {
           console.log(chalk.green("obs image is set."));
+           this.obs.send("RefreshBrowserSource", {
+            sourceName : `profile_pic${this.imageCount}`
+            }).then(res=>{
+           console.log(res);
+          }).catch(ex=>console.log(ex))
           isImageSaved = !isImageSaved;
         } else {
           isImageSaved;
