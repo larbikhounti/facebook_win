@@ -1,6 +1,7 @@
 const obsController = require("./obsController");
 const EventSource = require("eventsource");
 const chalk = require("chalk");
+const fs = require("fs");
 require("dotenv").config();
 const facebookAuth = require("./facebookAuth");
 const FB = new facebookAuth();
@@ -83,9 +84,15 @@ function connectAndStartStreaming(stream_url) {
     
     if (state) {
       if(globalSettings.isLiveJustStared=== false){
-        let interval = setInterval(function () {
+        let interval = setInterval(function async () {
           myController.getSourceSettingsForStartingCountDown().then(res=>{
+            let content = "<html><head><meta http-equiv='refresh' content='5' /><style>body{overflow-x:hidden;overflow-y:hidden} img{height: 100vh;width: 100vw;}</style></head><body height='100vh'><img  src='./person.jpg'><script></script></body></html>"
             if(res.sourceSettings.text === "start"){
+              for (let i = 0; i<= 3; i++) {
+                fs.writeFile(`./profile_pic/${i}.html`, content, async function () {      
+                });
+                
+              }
               globalSettings.isCommentsAllowed = true;
               myController.getSourceSettingsForUsersCountDown().catch(ex=>console.log(ex))
               myController.switchToPrimary();
@@ -106,14 +113,10 @@ function connectAndStartStreaming(stream_url) {
                     //console.log(myImageResult.data.url);
                     /*put await here*/ myController
                       .downloadAndSaveit(myImageResult.data.url, comment.from.name)
-                      .then((res) => {
+                      .then(async (res) => {
                        // myController.switchScenes();
                        //refresh browser
-                        this.obs.send("RefreshBrowserSource", {
-                          sourceName : "profile_pic0"
-                          }).then(res=>{
-                        console.log(res);
-                      })
+                    
 
                       });
 

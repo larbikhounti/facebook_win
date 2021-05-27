@@ -386,6 +386,7 @@ async  setWinnerProfilePic(image_index){
         // if there is no errors
         if (result.status === "ok") {
           console.log(chalk.green("winner profile pic is set"));
+      
           return true
          
         } 
