@@ -154,7 +154,7 @@ class obsController {
         // if there is no errors
         if (result.status === "ok") {
           console.log(chalk.green("obs image is set."));
-           this.obs.send("RefreshBrowserSource", {
+         await this.obs.send("RefreshBrowserSource", {
             sourceName : `profile_pic${this.imageCount}`
             }).then(res=>{
            console.log(res);
@@ -440,6 +440,11 @@ async getSourceSettingsForStartingCountDown(){
         console.log("game count down "+res.sourceSettings.text);
         if(res.sourceSettings.text == "end"){
           globalSettings.isCommentsAllowed = false;
+          /*
+          get all counts and compare them 
+          and take the small one as the winner or the last comment.
+          
+          */
           clearInterval(countDown)
         }
       }).catch(ex=>console.log(ex));
@@ -464,6 +469,20 @@ async getSourceSettingsForStartingCountDown(){
       }
     );
    }
+
+   /*
+ async  getWinnerWhenCountDownEnded(){
+   let i = 0;
+   for (let i = 0; i < 3; i++) {
+     await this.obs.send("SetSourceSettings", {
+        sourceName: `countdown${i}`,
+        sourceSettings: { text: userCount.toString() },
+      }).then((res) => {
+        console.log(res.sourceSettings.text)
+      });
+   }
+   }
+  */ 
    
 } //end of class
 

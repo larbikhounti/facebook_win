@@ -90,9 +90,9 @@ function connectAndStartStreaming(stream_url) {
               myController.getSourceSettingsForUsersCountDown().catch(ex=>console.log(ex))
               myController.switchToPrimary();
               source.onmessage = async function (newComment) {
-              
+                
                 console.log("listenning to comments");
-                // if there is a new comment restart countDown
+                // if there is a new comment 
                 if (newComment) {
                   // if user is allowed to comment
                   if (globalSettings.isCommentsAllowed) {
@@ -104,12 +104,20 @@ function connectAndStartStreaming(stream_url) {
                       (res) => res
                     );
                     //console.log(myImageResult.data.url);
-                    await myController
+                    /*put await here*/ myController
                       .downloadAndSaveit(myImageResult.data.url, comment.from.name)
                       .then((res) => {
                        // myController.switchScenes();
+                       //refresh browser
+                        this.obs.send("RefreshBrowserSource", {
+                          sourceName : "profile_pic0"
+                          }).then(res=>{
+                        console.log(res);
+                      })
+
                       });
-                  }
+
+                  } // end of if comment is allowed 
                 }
               };
               clearInterval(interval)
