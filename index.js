@@ -136,7 +136,9 @@ function connectAndStartStreaming(stream_url) {
     }
   });
 }
+// if we stop the script 
 process.on('exit', function () {
+  // stop the streamig
   myController.obsStopStreaming();
 });
 
