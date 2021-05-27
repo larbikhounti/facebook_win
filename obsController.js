@@ -471,6 +471,29 @@ async getSourceSettingsForStartingCountDown(){
     );
    }
 
+   setDefaultProfilepics(image_number){
+    this.obs.send("SetSourceSettings", {
+      sourceName: `profile_pic${image_number}`,
+      sourceSettings: {
+        css: "",
+        fps_custom: false,
+        height: 300,
+        reroute_audio: false,
+        url: process.cwd() + `/profile_pic/${image_number}.html`,
+        width: 300,
+      },
+    })
+    .then(async (result) => {
+      // if there is no errors
+      if (result.status === "ok") {
+        console.log(chalk.green("obs default image is set."));
+      } else {
+        console.log(chalk.red("obs default image won't is set."));
+      }
+    })
+    .catch((ex) => console.log(ex));
+   }
+
    /*
  async  getWinnerWhenCountDownEnded(){
    let i = 0;
@@ -484,6 +507,19 @@ async getSourceSettingsForStartingCountDown(){
    }
    }
   */ 
+ obsStopStreaming(){
+  this.obs.send("StopStreaming", {
+  })
+  .then(async (result) => {
+    // if there is no errors
+    if (result.status === "ok") {
+      console.log(chalk.green("obs stream stoped."));
+    } else {
+      console.log(chalk.red("obs stream won't stop."));
+    }
+  })
+  .catch((ex) => console.log(ex));
+ }
    
 } //end of class
 
