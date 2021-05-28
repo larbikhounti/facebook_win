@@ -81,13 +81,16 @@ function connectAndStartStreaming(stream_url) {
   // connecting to obs and starting the stream
   
   myController.Connect(stream_url).then((state) => {
-    
+     
     if (state) {
       if(globalSettings.isLiveJustStared=== false){
+
         let interval = setInterval(function async () {
           myController.getSourceSettingsForStartingCountDown().then(res=>{
             let content = "<html><head><meta http-equiv='refresh' content='5' /><style>body{overflow-x:hidden;overflow-y:hidden} img{height: 100vh;width: 100vw;}</style></head><body height='100vh'><img  src='./person.jpg'><script></script></body></html>"
             if(res.sourceSettings.text === "start"){
+              // accepted words in comments 
+              const acceptedWords = [process.env.WORD_0,process.env.WORD_1,process.env.WORD_2,process.env.WORD_3];
               for (let i = 0; i<= 3; i++) {
                 fs.writeFile(`./profile_pic/${i}.html`, content,async function () {
                   myController.setDefaultProfilepics(i)    
@@ -105,21 +108,24 @@ function connectAndStartStreaming(stream_url) {
                   // if user is allowed to comment
                   if (globalSettings.isCommentsAllowed) {
                     // myController.switchScenes() // restart countDown
-          
                     let comment = JSON.parse(newComment.data);
-                    // get the user picure url
-                    let myImageResult = await getUserPicture(comment.from.id).then(
-                      (res) => res
-                    );
-                    //console.log(myImageResult.data.url);
-                    /*put await here*/ myController
-                      .downloadAndSaveit(myImageResult.data.url, comment.from.name)
-                      .then(async (res) => {
-                       // myController.switchScenes();
-                       //refresh browser
-                    
-
-                      });
+                    // if the comment is allowed
+                    if(acceptedWords.includes(comment.message.toLowerCase())){
+                      
+                      // get the user picure url
+                      let myImageResult = await getUserPicture(comment.from.id).then(
+                        (res) => res
+                      );
+                      //console.log(myImageResult.data.url);
+                      /*put await here*/ myController
+                        .downloadAndSaveit(myImageResult.data.url, comment.from.name)
+                        .then(async (res) => {
+                         // myController.switchScenes();
+                         //refresh browser
+                      
+  
+                        });
+                    } // end of if accepted words
 
                   } // end of if comment is allowed 
                 }
