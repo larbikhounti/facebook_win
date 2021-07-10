@@ -26,7 +26,7 @@ async function startLiveVideoStreaming() {
   let data = {
     title: "test",
     description: "this is a test",
-    privacy: privacies.friends,
+    privacy: privacies.public,
     accessToken: process.env.ACCESS_TOKEN,
   };
   let isLiveStremingOnFacebookStrated = false;
