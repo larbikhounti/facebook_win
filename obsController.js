@@ -6,7 +6,7 @@ const { stringify } = require("query-string");
 const globalSettings = require("./globalSettings");
 require("dotenv").config();
 class obsController {
-   obs;
+  obs;
   imageCount = 0;
   interval0;
   interval1;
@@ -18,7 +18,6 @@ class obsController {
     this.obs = new OBSWebSocket();
     this.address = adress;
     this.password = password;
-    
   }
   // connect to obs
   async Connect(stream_url) {
@@ -38,7 +37,7 @@ class obsController {
         // this.restartStream();
       })
       .catch((ex) => {
-        console.log(chalk.bgRed(ex.description));
+        console.log(ex);
       });
     return result;
   }
@@ -63,16 +62,19 @@ class obsController {
   async startStreaming() {
     let isStreamStarted = false;
     console.log(chalk.yellow("starting live stream..."));
-    await this.obs.send("StartStreaming").then((streaming) => {
-      // if there is no errors
-      if (streaming.status === "ok") {
-        console.log(chalk.green("Stream Started."));
-        //set is Stream Started to true
-        isStreamStarted = !isStreamStarted;
-      } else {
-        isStreamStarted;
-      }
-    }).catch(ex=>console.log(ex));
+    await this.obs
+      .send("StartStreaming")
+      .then((streaming) => {
+        // if there is no errors
+        if (streaming.status === "ok") {
+          console.log(chalk.green("Stream Started."));
+          //set is Stream Started to true
+          isStreamStarted = !isStreamStarted;
+        } else {
+          isStreamStarted;
+        }
+      })
+      .catch((ex) => console.log(ex));
     return isStreamStarted;
   }
 
@@ -146,7 +148,7 @@ class obsController {
           fps_custom: false,
           height: 300,
           reroute_audio: false,
-          url: process.cwd() + `/profile_pic/${this.imageCount}.jfif`,
+          url: process.cwd() + `/profile_pic/${this.imageCount}.html`,
           width: 300,
         },
       })
@@ -154,6 +156,14 @@ class obsController {
         // if there is no errors
         if (result.status === "ok") {
           console.log(chalk.green("obs image is set."));
+          await this.obs
+            .send("RefreshBrowserSource", {
+              sourceName: `profile_pic${this.imageCount}`,
+            })
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((ex) => console.log(ex));
           isImageSaved = !isImageSaved;
         } else {
           isImageSaved;
@@ -165,13 +175,18 @@ class obsController {
 
   async downloadAndSaveit(image_url, user_name) {
     let ctx = this;
-    const response = await fetch(image_url);
-    const buffer = await response.buffer();
+    // const response = await fetch(image_url);
+    let content =
+      "<html><head><meta http-equiv='refresh' content='5' /><style>body{overflow-x:hidden;overflow-y:hidden} img{height: 100vh;width: 100vw;}</style></head><body height='100vh'><img  src='" +
+      image_url +
+      "'><script></script></body></html>";
+
+    // const buffer = await response.buffer();
     switch (this.imageCount) {
       case 0:
         ctx.setUserName(user_name);
         this.imageCount++;
-        return fs.writeFile(`./profile_pic/0.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/0.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(0);
           });
@@ -180,7 +195,7 @@ class obsController {
       case 1:
         ctx.setUserName(user_name);
         this.imageCount++;
-        return fs.writeFile(`./profile_pic/1.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/1.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(1);
           });
@@ -189,7 +204,7 @@ class obsController {
       case 2:
         ctx.setUserName(user_name);
         this.imageCount++;
-        return fs.writeFile(`./profile_pic/2.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/2.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(2);
           });
@@ -198,7 +213,7 @@ class obsController {
       case 3:
         ctx.setUserName(user_name);
         this.imageCount = 0;
-        return fs.writeFile(`./profile_pic/3.jfif`, buffer, async function () {
+        return fs.writeFile(`./profile_pic/3.html`, content, async function () {
           return await ctx.setTheImage().then(() => {
             ctx.WinnerCountDown(3);
           });
@@ -267,8 +282,8 @@ class obsController {
                 //count0 = 60
                 ctx.setUserCountDown("winner", 1);
                 clearInterval(ctx.interval1);
-                 //will find the winner and display it
-                 ctx.getSourceSettings(1);
+                //will find the winner and display it
+                ctx.getSourceSettings(1);
               }
             }
           }, 1000);
@@ -288,8 +303,8 @@ class obsController {
                 //count2 = 60
                 ctx.setUserCountDown("winner", 2);
                 clearInterval(ctx.interval2);
-                  //will find the winner and display it
-                  ctx.getSourceSettings(2);
+                //will find the winner and display it
+                ctx.getSourceSettings(2);
               }
             }
           }, 1000);
@@ -309,9 +324,8 @@ class obsController {
                 //count3 = 60
                 ctx.setUserCountDown("winner", 3);
                 clearInterval(ctx.interval3);
-                  //will find the winner and display it
-                  ctx.getSourceSettings(3);
-                
+                //will find the winner and display it
+                ctx.getSourceSettings(3);
               }
             }
           }, 1000);
@@ -323,8 +337,7 @@ class obsController {
     }
   }
   // show the winner
-  SwitchSceneAndSetTheWinner(index,user_name) {
- 
+  SwitchSceneAndSetTheWinner(index, user_name) {
     this.obs.sendCallback(
       "SetCurrentScene",
       {
@@ -332,38 +345,41 @@ class obsController {
       },
       (error, data) => {
         if (data.status === "ok") {
-          this.setWinnerNameAndProfilePic(user_name,index).then(async res=>{
-            if(res){
-              await this.obs.send("RefreshBrowserSource", {
-                sourceName : "profile_pic"
-                }).then(res=>{
-               console.log(res);
+          this.setWinnerNameAndProfilePic(user_name, index)
+            .then(async (res) => {
+              if (res) {
+                await this.obs
+                  .send("RefreshBrowserSource", {
+                    sourceName: "profile_pic",
+                  })
+                  .then((res) => {
+                    console.log(res);
+                  });
+              }
             })
-            }
-          }).catch(ex=>console.log(ex))
+            .catch((ex) => console.log(ex));
         }
         if (error) {
           console.log(error);
         }
       }
     );
-
   }
- async setWinnerNameAndProfilePic(user_name,image_index) {
-    
-  await  this.obs
+  async setWinnerNameAndProfilePic(user_name, image_index) {
+    await this.obs
       .send("SetSourceSettings", {
         sourceName: `winnername`,
         sourceSettings: { text: user_name },
       })
-      .then(async(res) => {
+      .then(async (res) => {
         if (res.status == "ok") {
-        return await this.setWinnerProfilePic(image_index).then(res=>res)
+          return await this.setWinnerProfilePic(image_index).then((res) => res);
         }
-      }).catch(ex=>console.log(ex));
+      })
+      .catch((ex) => console.log(ex));
   }
-async  setWinnerProfilePic(image_index){
-   return await this.obs
+  async setWinnerProfilePic(image_index) {
+    return await this.obs
       .send("SetSourceSettings", {
         sourceName: `profile_pic`,
         sourceSettings: {
@@ -371,7 +387,7 @@ async  setWinnerProfilePic(image_index){
           fps_custom: false,
           height: 300,
           reroute_audio: false,
-          url: process.cwd() + `/profile_pic/${image_index}.jfif`,
+          url: process.cwd() + `/profile_pic/${image_index}.html`,
           width: 300,
         },
       })
@@ -379,50 +395,82 @@ async  setWinnerProfilePic(image_index){
         // if there is no errors
         if (result.status === "ok") {
           console.log(chalk.green("winner profile pic is set"));
-          return true
-         
-        } 
+
+          return true;
+        }
       })
       .catch((ex) => console.log(ex));
   }
- async getSourceSettings(index){
-   globalSettings.isCommentsAllowed = false;
-  return await this.obs
-    .send("GetSourceSettings", {
-      sourceName: `name${index}`
-    })
-    .then((res) => {
-      if (res.status== "ok") {
-       
-        let user_name = res.sourceSettings.text;
-        console.log(`winner name is ${user_name}`)
-        this.SwitchSceneAndSetTheWinner(index,user_name);
-      //  this.SwitchSceneAndSetTheWinner(index,)
-     // console.log(res.sourceSettings.text)
-      }
-    }).catch(ex=>console.log(ex));
-
-  }
-async getSourceSettingsForStartingCountDown(){
+  async getSourceSettings(index) {
     globalSettings.isCommentsAllowed = false;
-  return await this.obs.send("GetSourceSettings", {
-       sourceName: `startingcountdown`
-     })
-     .then((res) => {
-       return res;
-      //  if (res.status== "ok") {
-      //    let isCountDownStarted = res.sourceSettings.text;
-      //    if(isCountDownStarted === "start" ){
-      //     globalSettings.isLiveJustStared = true;
-      //     return true;
-      //    }
-      //  }else{
-      //    return false
-      //  }
-     }).catch(ex=>console.log(ex));
-  
-   }
-   switchToPrimary(){
+    return await this.obs
+      .send("GetSourceSettings", {
+        sourceName: `name${index}`,
+      })
+      .then((res) => {
+        if (res.status == "ok") {
+          let user_name = res.sourceSettings.text;
+          console.log(`winner name is ${user_name}`);
+          this.SwitchSceneAndSetTheWinner(index, user_name);
+          //  this.SwitchSceneAndSetTheWinner(index,)
+          // console.log(res.sourceSettings.text)
+        }
+      })
+      .catch((ex) => console.log(ex));
+  }
+
+  async getSourceSettingsForStartingCountDown() {
+    globalSettings.isCommentsAllowed = false;
+    return await this.obs
+      .send("GetSourceSettings", {
+        sourceName: `startingcountdown`,
+      })
+      .then((res) => {
+        return res;
+        //  if (res.status== "ok") {
+        //    let isCountDownStarted = res.sourceSettings.text;
+        //    if(isCountDownStarted === "start" ){
+        //     globalSettings.isLiveJustStared = true;
+        //     return true;
+        //    }
+        //  }else{
+        //    return false
+        //  }
+      })
+      .catch((ex) => console.log(ex));
+  }
+
+  async getSourceSettingsForUsersCountDown() {
+    let countDown = setInterval(async () => {
+      await this.obs
+        .send("GetSourceSettings", {
+          sourceName: `countDown`,
+        })
+        .then((res) => {
+          console.log("game count down " + res.sourceSettings.text);
+          if (res.sourceSettings.text == "end") {
+            globalSettings.isCommentsAllowed = false;
+
+            /*
+          get all counts and compare them 
+          and take the small one as the winner.
+          */
+            this.getAllProfileCounts()
+              .then((res) => {
+                // get the index of the minimum number in the res array
+                let winner =  res.indexOf(Math.min(...res));
+                this.SwitchSceneAndSetTheWinneWhenCountDownEnded(winner).catch(ex=>console.log(ex))
+                console.log(winner);
+              })
+              .catch((ex) => console.log(ex));
+            clearInterval(countDown);
+          }
+        })
+        .catch((ex) => console.log(ex));
+    }, 1000);
+  }
+
+  switchToPrimary() {
     this.obs.sendCallback(
       "SetCurrentScene",
       {
@@ -437,9 +485,126 @@ async getSourceSettingsForStartingCountDown(){
         }
       }
     );
+  }
+
+  setDefaultProfilepics(image_number) {
+    this.obs
+      .send("SetSourceSettings", {
+        sourceName: `profile_pic${image_number}`,
+        sourceSettings: {
+          css: "",
+          fps_custom: false,
+          height: 300,
+          reroute_audio: false,
+          url: process.cwd() + `/profile_pic/${image_number}.html`,
+          width: 300,
+        },
+      })
+      .then(async (result) => {
+        // if there is no errors
+        if (result.status === "ok") {
+          console.log(chalk.green("obs default image is set."));
+        } else {
+          console.log(chalk.red("obs default image won't is set."));
+        }
+      })
+      .catch((ex) => console.log(ex));
+  }
+
+  /*
+ async  getWinnerWhenCountDownEnded(){
+   let i = 0;
+   for (let i = 0; i < 3; i++) {
+     await this.obs.send("SetSourceSettings", {
+        sourceName: `countdown${i}`,
+        sourceSettings: { text: userCount.toString() },
+      }).then((res) => {
+        console.log(res.sourceSettings.text)
+      });
    }
-   
+   }
+  */
+  obsStopStreaming() {
+    this.obs
+      .send("StopStreaming", {})
+      .then(async (result) => {
+        // if there is no errors
+        if (result.status === "ok") {
+          console.log(chalk.green("obs stream stoped."));
+        } else {
+          console.log(chalk.red("obs stream won't stop."));
+        }
+      })
+      .catch((ex) => console.log(ex));
+  }
+
+  async getAllProfileCounts() {
+    let profileCounts = [];
+    for (let i = 0; i <= 3; i++) {
+      await this.obs
+        .send("GetSourceSettings", {
+          sourceName: `countdown${i}`,
+        })
+        .then((res) => {
+          profileCounts.push(parseInt(res.sourceSettings.text));
+        })
+        .catch((ex) => console.log(ex));
+    }
+    return profileCounts;
+  }
+  // call this function only when count down ended and there is no winner
+ async SwitchSceneAndSetTheWinneWhenCountDownEnded(indexOfTheWinner) {
+    this.obs.sendCallback(
+      "SetCurrentScene",
+      {
+        "scene-name": "winner",
+      },
+      (error, data) => {
+        if (data.status === "ok") {
+           this.obs.send("GetSourceSettings", {
+              sourceName: `name${indexOfTheWinner}`,
+            })
+            .then((res) => {
+              if(res.status == "ok"){
+               let nameOfTheWinner =  res.sourceSettings.text;
+               this.obs.send("SetSourceSettings", {
+                 sourceName: `winnername`,
+                 sourceSettings: { text: nameOfTheWinner },
+               })
+               .then((res) => console.log(res)).catch(ex=>console.log(ex));
+               
+
+               this.obs.send("SetSourceSettings", {
+                 sourceName: `profile_pic`,
+                 sourceSettings: {
+                   css: "",
+                   fps_custom: false,
+                   height: 300,
+                   reroute_audio: false,
+                   url: process.cwd() + `/profile_pic/${indexOfTheWinner}.html`,
+                   width: 300,
+                 },
+               })
+               .then(async (result) => {
+                 // if there is no errors
+                 if (result.status === "ok") {
+                   console.log("winner profile picture is set")
+                 }
+                  
+               })
+               .catch((ex) => console.log(ex));
+
+              }
+            })
+            .catch((ex) => console.log(ex));
+        }
+
+        if (error) {
+          console.log(error);
+        }
+      }
+    ); //end of ()
+  }
 } //end of class
 
 module.exports = obsController;
-
