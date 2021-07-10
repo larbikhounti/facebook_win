@@ -25,7 +25,7 @@ class facebookAuth {
     const client_id = process.env.CLIENT_ID;
     const client_secret = process.env.APP_SECRET;
     const url = new URL(
-      `https://graph.facebook.com/v4.0/oauth/access_token?redirect_uri=http://localhost:3000/authenticate/facebook/&client_id=${client_id}&client_secret=${client_secret}&code=${code}`
+      `https://graph.facebook.com/v4.0/oauth/access_token?redirect_uri=https://facebook-live-auth.herokuapp.com/authenticate/facebook/&client_id=${client_id}&client_secret=${client_secret}&code=${code}`
     );
     await fetch(url)
       .then((res) => res.json())
