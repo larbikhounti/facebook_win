@@ -9,7 +9,7 @@ class facebookAuth {
   getUserpermissions() {
     const stringifiedParams = queryString.stringify({
       client_id: process.env.CLIENT_ID,
-      redirect_uri: "http://localhost:3000/authenticate/facebook/",
+      redirect_uri: "https://localhost:3000/authenticate/facebook/",
       scope: ["public_profile", "pages_manage_posts","user_videos","pages_show_list","pages_read_engagement","pages_read_user_content"].join(","), // comma seperated string
       response_type: "code",
       auth_type: "rerequest",
@@ -25,11 +25,12 @@ class facebookAuth {
     const client_id = process.env.CLIENT_ID;
     const client_secret = process.env.APP_SECRET;
     const url = new URL(
-      `https://graph.facebook.com/v4.0/oauth/access_token?redirect_uri=http://localhost:3000/authenticate/facebook/&client_id=${client_id}&client_secret=${client_secret}&code=${code}`
+      `https://graph.facebook.com/v4.0/oauth/access_token?redirect_uri=https://facebook-live-auth.herokuapp.com/authenticate/facebook/&client_id=${client_id}&client_secret=${client_secret}&code=${code}`
     );
     await fetch(url)
       .then((res) => res.json())
       .then(async (json) => {
+        console.log("json " +JSON.stringify(json) )
         if (json.access_token) {
           console.log(chalk.green("facebook access token connected."))
           // save ACCESS_TOKEN in .env
