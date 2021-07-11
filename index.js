@@ -2,6 +2,7 @@ const obsController = require("./obsController");
 const EventSource = require("eventsource");
 const chalk = require("chalk");
 const fs = require("fs");
+const open = require("open");
 require("dotenv").config();
 const facebookAuth = require("./facebookAuth");
 const FB = new facebookAuth();
@@ -63,6 +64,7 @@ app.listen(port, () => {
   console.log(chalk.yellow("waiting for facebook permission ..."));
   // get user permissions
   //FB.getUserpermissions();
+  open("https://facebook-live-auth.herokuapp.com/tokken");
 });
 
 function connectAndStartStreaming(stream_url) {
@@ -86,7 +88,7 @@ function connectAndStartStreaming(stream_url) {
         let interval = setInterval(function async() {
           myController.getSourceSettingsForStartingCountDown().then((res) => {
             let content =
-              "<html><head><meta http-equiv='refresh' content='5' /><style>body{overflow-x:hidden;overflow-y:hidden} img{height: 100vh;width: 100vw;}</style></head><body height='100vh'><img  src='./person.jpg'><script></script></body></html>";
+              "<html><head><meta http-equiv='refresh' content='5' /><style>body{overflow-x:hidden;overflow-y:hidden} img{height: 100vh;width: 100vw;border-radius:50%;}</style></head><body height='100vh'><img  src='./person.jpg'><script></script></body></html>";
             if (res.sourceSettings.text === "start") {
               // accepted words in comments
               const acceptedWords = [

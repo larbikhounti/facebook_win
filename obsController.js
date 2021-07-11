@@ -144,7 +144,7 @@ class obsController {
       .send("SetSourceSettings", {
         sourceName: `profile_pic${this.imageCount}`,
         sourceSettings: {
-          css: "",
+          
           fps_custom: false,
           height: 300,
           reroute_audio: false,
@@ -383,12 +383,12 @@ class obsController {
       .send("SetSourceSettings", {
         sourceName: `profile_pic`,
         sourceSettings: {
-          css: "",
+          
           fps_custom: false,
-          height: 300,
+          height: 500,
           reroute_audio: false,
           url: process.cwd() + `/profile_pic/${image_index}.html`,
-          width: 300,
+          width: 500,
         },
       })
       .then(async (result) => {
@@ -444,7 +444,7 @@ class obsController {
     let countDown = setInterval(async () => {
       await this.obs
         .send("GetSourceSettings", {
-          sourceName: `countDown`,
+          sourceName: `countdown`,
         })
         .then((res) => {
           console.log("game count down " + res.sourceSettings.text);
@@ -492,7 +492,7 @@ class obsController {
       .send("SetSourceSettings", {
         sourceName: `profile_pic${image_number}`,
         sourceSettings: {
-          css: "",
+          css: "body>img{border-radius:50%;}",
           fps_custom: false,
           height: 300,
           reroute_audio: false,
