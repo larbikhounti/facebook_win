@@ -2,13 +2,15 @@
 # facebook win
 
 initiate live stream to facebook using obs-websocket,
-for each comment on the live video
-the scene will change causing the countDown script
-to  restart.
+for each comment on the live video,
+the script will take the commenter name and he profile picture and will be displayed on the live stream itself.
 
-
-
-
+```diff
++ you will need to create an app on facebook account (normal if you worked with google , meta and other big tech)
++ also you need to set up permissions for the app for ex: read comments, start live stream.
++ to use the fully power of it its need to be reviewed by facebook team ( in my case its already approved )
+ 
+```
 ## Variables needed
 
 To run this project, you will need to add the following environment variables to your .env file
