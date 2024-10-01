@@ -11,7 +11,7 @@ initiate live stream to facebook using obs-websocket,
 for each comment on the live video,
 the script will take the commenter name and he profile picture and will be displayed on the live stream itself.
 
-![live example](https://web.facebook.com/watch/live/?ref=watch_permalink&v=428462101245800)
+live example : https://web.facebook.com/watch/live/?ref=watch_permalink&v=428462101245800
 
 
 ```diff
