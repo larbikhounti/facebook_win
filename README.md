@@ -11,6 +11,9 @@ initiate live stream to facebook using obs-websocket,
 for each comment on the live video,
 the script will take the commenter name and he profile picture and will be displayed on the live stream itself.
 
+![live example](https://web.facebook.com/watch/live/?ref=watch_permalink&v=428462101245800)
+
+
 ```diff
 + you will need to create an app on facebook account (normal if you worked with google , meta and other big tech)
 + also you need to set up permissions for the app for ex: read comments, start live stream.
